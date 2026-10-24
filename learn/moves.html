@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Monte Carlo moves · CDT</title>
+  <meta name="description" content="Interactive visualizations of the local Monte Carlo moves used in 2D, 3D and 4D Causal Dynamical Triangulations.">
+  <meta property="og:title" content="Monte Carlo moves · CDT">
+  <meta property="og:description" content="Interactive visualizations of the local Monte Carlo moves used in 2D, 3D and 4D Causal Dynamical Triangulations.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#14161b" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/site.css">
+  <script>try{var t=localStorage.getItem('cdt-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  <link rel="stylesheet" href="../vendor/katex-0.16.11/katex.min.css">
+  <script defer src="../vendor/katex-0.16.11/katex.min.js"></script>
+  <script defer src="../vendor/katex-0.16.11/contrib/auto-render.min.js"></script>
+  <script defer src="../js/site.js"></script>
+  <script type="importmap">{ "imports": { "three": "../vendor/three-0.169.0/three.module.min.js" } }</script>
+  <script type="module" src="../js/moves/page.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="../index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 26 L9 6 L16 26 Z" fill="var(--up)"/><path d="M9 6 L23 6 L16 26 Z" fill="var(--down)"/><path d="M16 26 L23 6 L30 26 Z" fill="var(--up)"/><path d="M2 26 H30 M2 6 H30" stroke="currentColor" stroke-width="1.5"/></svg><span>Causal Dynamical Triangulations</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="../learn/index.html" data-section="/learn/">Learn</a></li>
+          <li><a href="../learn/simulator.html">Simulator</a></li>
+          <li><a href="../research/index.html" data-section="/research/">Research</a></li>
+          <li><a href="../references.html">References</a></li>
+          <li><a href="../about.html">About</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch theme">&#9680;</button>
+    </div>
+  </header>
+  <nav class="sub-nav" aria-label="Learn pages">
+    <ul>
+      <li><a href="../learn/index.html">Intro</a></li>
+      <li><a href="../learn/physics.html">Physics</a></li>
+      <li><a href="../learn/moves.html">Moves</a></li>
+      <li><a href="../learn/simulator.html">Simulator</a></li>
+    </ul>
+  </nav>
+  <main id="main" class="wide">
+    <h1>Monte Carlo moves</h1>
+    <section class="in-brief" aria-label="Summary">
+      <h2>Summary</h2>
+      <p>Simulations sample the space of triangulations by a small set of local updates, called moves. Each move replaces a few simplices by a different set with the same boundary.</p>
+    </section>
+    <p class="lede">Because the replaced region keeps its boundary, the rest of the triangulation is unaffected. Taken together, the moves are <em>ergodic</em>: any causal triangulation of a given topology can be reached from any other. Each move preserves the time foliation.</p>
+    <p>The name of a move counts simplices: an \((n,m)\) move replaces \(n\) simplices by \(m\). Every move has an inverse \((m,n)\) that undoes it.</p>
+
+    <h2 id="moves-2d">Two dimensions</h2>
+    <p>2D CDT requires three moves, which are those used by the <a href="simulator.html">simulator</a>.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Move</th><th>Description</th><th>\(\Delta N_0\)</th><th>\(\Delta N_2\)</th></tr></thead>
+        <tbody>
+          <tr><td>(2,4) add</td><td>Insert a vertex in the middle of a spatial link. The two triangles that share the link become four.</td><td>+1</td><td>+2</td></tr>
+          <tr><td>(4,2) delete</td><td>Remove a vertex of order four (two triangles above, two below), the inverse of add.</td><td>−1</td><td>−2</td></tr>
+          <tr><td>(2,2) flip</td><td>Two neighbouring triangles in the same strip, one up and one down, swap the timelike link between them for the other diagonal.</td><td>0</td><td>0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel" id="moves2d">
+      <div class="placeholder">The animated 2D moves need JavaScript.</div>
+    </div>
+
+    <h2 id="moves-3d">Three dimensions</h2>
+    <p>In 3D the building blocks are tetrahedra of types (3,1), (2,2) and (1,3), and there are five moves. All of them are Pachner moves restricted to respect the slicing.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Move</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>(2,6) add</td><td>Insert a vertex in a spatial triangle. The (3,1) and (1,3) tetrahedra on either side become three of each.</td></tr>
+          <tr><td>(6,2) delete</td><td>Remove a vertex shared by exactly six tetrahedra (three spatial triangles in its slice), the inverse of add.</td></tr>
+          <tr><td>(4,4) flip</td><td>Flip a spatial link inside a slice, changing four tetrahedra into four others.</td></tr>
+          <tr><td>(2,3) shift</td><td>Two tetrahedra sharing a timelike triangle become three sharing a timelike link.</td></tr>
+          <tr><td>(3,2) inverse shift</td><td>The inverse of the shift.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel" id="moves3d">
+      <div class="placeholder">The rotatable 3D moves need JavaScript and WebGL.</div>
+    </div>
+
+    <h2 id="moves-4d">Four dimensions</h2>
+    <p>4D CDT uses the ten moves of Ambjørn, Jurkiewicz and Loll (<a href="https://arxiv.org/abs/hep-th/0105267">hep-th/0105267</a>): five moves and their inverses. As four-dimensional configurations cannot be drawn faithfully, the table lists each move by the sub-simplex it removes and the one it creates. The <em>centre</em> of a move is the sub-simplex it removes, which is shared by all the simplices it replaces.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Move</th><th>Centre removed</th><th>Created</th><th>\(\Delta N_0\)</th><th>\(\Delta N_{41}\)</th><th>\(\Delta N_{32}\)</th></tr></thead>
+        <tbody>
+          <tr><td>(2,8)</td><td>a spatial tetrahedron</td><td>a vertex</td><td>+1</td><td>+6</td><td>0</td></tr>
+          <tr><td>(8,2)</td><td>a vertex in 8 simplices</td><td>a spatial tetrahedron</td><td>−1</td><td>−6</td><td>0</td></tr>
+          <tr><td>(4,6)</td><td>a spatial triangle</td><td>a spatial link</td><td>0</td><td>+2</td><td>0</td></tr>
+          <tr><td>(6,4)</td><td>a spatial link of order 3</td><td>a spatial triangle</td><td>0</td><td>−2</td><td>0</td></tr>
+          <tr><td>(2,4) v1, v2</td><td>a timelike tetrahedron</td><td>a timelike link</td><td>0</td><td>0</td><td>+2</td></tr>
+          <tr><td>(4,2) v1, v2</td><td>a timelike link of order 4</td><td>a timelike tetrahedron</td><td>0</td><td>0</td><td>−2</td></tr>
+          <tr><td>(3,3) v1, v2</td><td>a timelike triangle of order 3</td><td>another timelike triangle</td><td>0</td><td>0</td><td>0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The (2,4), (4,2) and (3,3) moves each come in two versions with the same change in the counts: v1 rearranges simplices around a (4,1)/(1,4) pair, and v2 around (3,2)/(2,3) simplices. The counts follow the f-vector tables of the original code, which the audit verified against both Dehn–Sommerville relations.</p>
+    <p>In the corrected sampler, a proposal picks a move type, then a simplex from a bag of candidates (the <em>site</em>), then one of its sub-simplices as the candidate centre. The cards give, for each move, the exact Hastings factor this procedure requires, and the true ratio in the legacy code, which used a factor of 1 throughout. Here \(N_{41}\) counts (4,1)+(1,4) simplices and \(N_{32}\) counts (3,2)+(2,3).</p>
+    <ul class="move-cards" id="moves4d">
+      <li class="move-card"><h3>(2,8)</h3><dl>
+        <dt>Site</dt><dd>a (4,1) or (1,4) simplex</dd>
+        <dt>Centre</dt><dd>its spatial tetrahedron</dd>
+        <dt>Change</dt><dd>\(N_0{+}1,\ N_{41}{+}6\)</dd>
+        <dt>Factor</dt><dd>\(N_{41}/(N_{41}+6)\)</dd>
+        <dt>Legacy</dt><dd>true ratio 3.96, used 1</dd></dl></li>
+      <li class="move-card"><h3>(8,2)</h3><dl>
+        <dt>Site</dt><dd>a (4,1) or (1,4) simplex</dd>
+        <dt>Centre</dt><dd>a vertex of its spatial tetrahedron, in 8 simplices</dd>
+        <dt>Change</dt><dd>\(N_0{-}1,\ N_{41}{-}6\)</dd>
+        <dt>Factor</dt><dd>\(N_{41}/(N_{41}-6)\)</dd>
+        <dt>Legacy</dt><dd>true ratio 0.25, used 1</dd></dl></li>
+      <li class="move-card"><h3>(4,6)</h3><dl>
+        <dt>Site</dt><dd>a (4,1) or (1,4) simplex</dd>
+        <dt>Centre</dt><dd>a triangle of its spatial tetrahedron</dd>
+        <dt>Change</dt><dd>\(N_{41}{+}2\)</dd>
+        <dt>Factor</dt><dd>\(N_{41}/(N_{41}+2)\)</dd>
+        <dt>Legacy</dt><dd>true ratio 0.50–2.98, used 1</dd></dl></li>
+      <li class="move-card"><h3>(6,4)</h3><dl>
+        <dt>Site</dt><dd>a (4,1) or (1,4) simplex</dd>
+        <dt>Centre</dt><dd>an edge of its spatial tetrahedron, in 3 spatial triangles</dd>
+        <dt>Change</dt><dd>\(N_{41}{-}2\)</dd>
+        <dt>Factor</dt><dd>\(N_{41}/(N_{41}-2)\)</dd>
+        <dt>Legacy</dt><dd>true ratio 0.67–2.01, used 1</dd></dl></li>
+      <li class="move-card"><h3>(2,4) v1</h3><dl>
+        <dt>Site</dt><dd>a (4,1) or (1,4) simplex</dd>
+        <dt>Centre</dt><dd>one of its timelike tetrahedra</dd>
+        <dt>Change</dt><dd>\(N_{32}{+}2\)</dd>
+        <dt>Factor</dt><dd>1</dd>
+        <dt>Legacy</dt><dd>true ratio 1.99–4.00, used 1</dd></dl></li>
+      <li class="move-card"><h3>(4,2) v1</h3><dl>
+        <dt>Site</dt><dd>a (4,1) or (1,4) simplex</dd>
+        <dt>Centre</dt><dd>an apex-to-base edge, in 4 simplices</dd>
+        <dt>Change</dt><dd>\(N_{32}{-}2\)</dd>
+        <dt>Factor</dt><dd>1</dd>
+        <dt>Legacy</dt><dd>true ratio 0.50, used 1</dd></dl></li>
+      <li class="move-card"><h3>(3,3) v1</h3><dl>
+        <dt>Site</dt><dd>a (4,1) or (1,4) simplex</dd>
+        <dt>Centre</dt><dd>a timelike triangle (apex plus a spatial edge), in 3 simplices</dd>
+        <dt>Change</dt><dd>none</dd>
+        <dt>Factor</dt><dd>1</dd>
+        <dt>Legacy</dt><dd>true ratio 0.67–1.50, used 1</dd></dl></li>
+      <li class="move-card"><h3>(2,4) v2</h3><dl>
+        <dt>Site</dt><dd>a (3,2) or (2,3) simplex</dd>
+        <dt>Centre</dt><dd>one of its (2,2) tetrahedra</dd>
+        <dt>Change</dt><dd>\(N_{32}{+}2\)</dd>
+        <dt>Factor</dt><dd>\(N_{32}/(N_{32}+2)\)</dd>
+        <dt>Legacy</dt><dd>true ratio 1.99–4.02, used 1</dd></dl></li>
+      <li class="move-card"><h3>(4,2) v2</h3><dl>
+        <dt>Site</dt><dd>a (3,2) or (2,3) simplex</dd>
+        <dt>Centre</dt><dd>one of its timelike edges, in 4 simplices</dd>
+        <dt>Change</dt><dd>\(N_{32}{-}2\)</dd>
+        <dt>Factor</dt><dd>\(N_{32}/(N_{32}-2)\)</dd>
+        <dt>Legacy</dt><dd>true ratio 0.25–0.50, used 1</dd></dl></li>
+      <li class="move-card"><h3>(3,3) v2</h3><dl>
+        <dt>Site</dt><dd>a (3,2) or (2,3) simplex</dd>
+        <dt>Centre</dt><dd>one of its timelike triangles, in 3 simplices</dd>
+        <dt>Change</dt><dd>none</dd>
+        <dt>Factor</dt><dd>1</dd>
+        <dt>Legacy</dt><dd>true ratio 0.67–1.01, used 1</dd></dl></li>
+    </ul>
+    <p>The factors are ratios of site counts before and after the move. At typical volumes most differ from 1 by less than one per cent, but they are not equal to 1. In the legacy code the true ratios were much further from 1, because its proposal procedure differed (failed proposals were re-drawn, and the first valid candidate was always taken). The legacy ranges come from an exact enumeration on a configuration with \(N_4 = 700\).</p>
+
+    <h2 id="why-hastings">Proposal probabilities</h2>
+    <p>A simulation selects a move and a location, and then accepts or rejects the proposal. For the sampling to be correct, the acceptance probability must include the ratio of how likely the code is to propose the move and how likely it is to propose its inverse from the new triangulation. For example, the 4D (2,8) move is found from either of the 2 simplices that share its spatial tetrahedron, while its inverse (8,2) is found from all 8 simplices around the new vertex. The legacy 4D code omitted this ratio, which for these moves is equivalent to shifting \(\kappa_0\) by \(-\ln 4\). The <a href="../research/audit.html">audit</a> gives the details.</p>
+  </main>
+  <footer class="site-footer">
+    <div class="bar">
+      <span>Causal Dynamical Triangulations</span>
+      <span><a href="../about.html">Credits and licences</a> · <a href="../references.html">References</a></span>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Status and planned work · CDT</title>
+  <meta name="description" content="Current status, open questions and planned next steps for the unified CDT codebase.">
+  <meta property="og:title" content="Status and planned work · CDT">
+  <meta property="og:description" content="Current status, open questions and planned next steps for the unified CDT codebase.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#14161b" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/site.css">
+  <script>try{var t=localStorage.getItem('cdt-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  <link rel="stylesheet" href="../vendor/katex-0.16.11/katex.min.css">
+  <script defer src="../vendor/katex-0.16.11/katex.min.js"></script>
+  <script defer src="../vendor/katex-0.16.11/contrib/auto-render.min.js"></script>
+  <script defer src="../js/site.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="../index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 26 L9 6 L16 26 Z" fill="var(--up)"/><path d="M9 6 L23 6 L16 26 Z" fill="var(--down)"/><path d="M16 26 L23 6 L30 26 Z" fill="var(--up)"/><path d="M2 26 H30 M2 6 H30" stroke="currentColor" stroke-width="1.5"/></svg><span>Causal Dynamical Triangulations</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="../learn/index.html" data-section="/learn/">Learn</a></li>
+          <li><a href="../learn/simulator.html">Simulator</a></li>
+          <li><a href="../research/index.html" data-section="/research/">Research</a></li>
+          <li><a href="../references.html">References</a></li>
+          <li><a href="../about.html">About</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch theme">&#9680;</button>
+    </div>
+  </header>
+  <nav class="sub-nav" aria-label="Research pages">
+    <ul>
+      <li><a href="../research/index.html">Overview</a></li>
+      <li><a href="../research/audit.html">Audit</a></li>
+      <li><a href="../research/code.html">Code</a></li>
+      <li><a href="../research/validation.html">Validation</a></li>
+      <li><a href="../research/roadmap.html">Status</a></li>
+    </ul>
+  </nav>
+  <main id="main">
+    <h1>Status and planned work</h1>
+    <section class="in-brief" aria-label="Summary">
+      <h2>Summary</h2>
+      <p>Completed work, work in progress, open questions and planned extensions.</p>
+    </section>
+    <h2 id="done">Completed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Work</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Audit of the legacy 4D Lisp code</td><td class="verdict-yes">Done</td></tr>
+          <tr><td>Corrected 4D Metropolis–Hastings sampler (Lisp), with exact kernel audit</td><td class="verdict-yes">Done</td></tr>
+          <tr><td>First 4D validation at \(N_4 \le 22\text{k}\)</td><td class="verdict-yes">Done</td></tr>
+          <tr><td>Unified C++ codebase, phases 1–7: import, kernel tests and fixes, 4D port, C++/Lisp cross-check, shared observables, 5× speed-up and checkpoints, large-volume validation</td><td class="verdict-yes">Done</td></tr>
+          <tr><td>2D curvature profile against 2110.11100 and 1802.10524</td><td class="verdict-yes">Done</td></tr>
+          <tr><td>4D curvature profile observable</td><td class="verdict-yes">Done</td></tr>
+          <tr><td>Opt-in bookkeeping of removable sites in 3D and 4D, with exact kernel tests in both modes</td><td class="verdict-yes">Done</td></tr>
+          <tr><td>Exact checkpoint/restart for 2D and 3D</td><td class="verdict-yes">Done</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="running">In progress</h2>
+    <ul>
+      <li><strong>4D curvature profile of the de Sitter universe.</strong> The observable has been implemented and tested; production runs are in progress.</li>
+      <li><strong>Bookkeeping versus blind guessing.</strong> Paired chains in 3D and 4D compare equilibrium means, autocorrelation times and the wall-clock time per independent sample. A higher acceptance rate does not by itself imply faster sampling; the benchmark will determine whether bookkeeping should be extended.</li>
+      <li><strong>3D spatial slices</strong>, following arXiv:2208.12718.</li>
+    </ul>
+
+    <h2 id="open">Open questions</h2>
+    <ul>
+      <li><strong>A fully equilibrated de Sitter universe at large volume.</strong> At \(N_{41}\) = 20k and 40k a secondary lump persists; at 80k no single blob formed in \(3\times10^{10}\) proposals per chain. Growing the volume from a narrow start has not succeeded; a more promising starting point is a blob of the expected width, for example a rescaled equilibrated 40k configuration.</li>
+      <li><strong>The Hausdorff dimension</strong> \(D_H\), which requires equilibrated profiles at two or more volumes.</li>
+      <li><strong>The spectral dimension at \(N_4 \approx 180\text{k}\)</strong>, the volume of the published fit, which has the same requirement.</li>
+    </ul>
+
+    <h2 id="next">Extensions suggested by the methods paper</h2>
+    <p>The methods paper of the 2d-cdt and 3d-cdt codes (<a href="https://arxiv.org/abs/2310.16744">2310.16744</a>) suggests several extensions. Each is rated below by its risk to the correctness of the sampler and by the effort required:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>Upgrade</th><th>Risk</th><th>Effort</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>U9</td><td>Automatic thermalisation check in the analysis</td><td>none</td><td>low</td><td>next</td></tr>
+          <tr><td>U8</td><td>A way out of the 3D fixed-volume measurement loop</td><td>low</td><td>low</td><td>next</td></tr>
+          <tr><td>U7</td><td>Benchmark: bookkeeping vs blind guessing</td><td>low</td><td>medium</td><td>in progress</td></tr>
+          <tr><td>U6</td><td>3D bookkeeping for the (6,2) delete</td><td>medium</td><td>medium</td><td class="verdict-yes">done</td></tr>
+          <tr><td>U5</td><td>GPUs for expensive observables</td><td>low</td><td>high</td><td>only if observables dominate run time</td></tr>
+          <tr><td>U4</td><td>Full 3D bookkeeping for flip and shift moves</td><td>high</td><td>high</td><td>decide after U7</td></tr>
+          <tr><td>U3</td><td>Bookkeeping near higher-order transitions</td><td>high</td><td>high</td><td>needs U4–U7</td></tr>
+          <tr><td>U2</td><td>Relaxed manifold conditions (degenerate triangulations)</td><td>very high</td><td>very high</td><td>not planned</td></tr>
+          <tr><td>U1</td><td>Monte Carlo moves on GPUs</td><td>very high</td><td>very high</td><td>not planned</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The planned order begins with the least costly and lowest-risk items, each of which makes the next measurable: completion of the benchmark, the thermalisation check and the loop escape, extension of the benchmark to 2D, and then a decision on full bookkeeping based on the results.</p>
+    <p>GPU-parallel moves are not planned. The moves are local but sequential; a parallel chain would require a new proof of detailed balance and could not be verified with the existing exact tests. Running many independent chains already makes full use of the hardware without any risk to correctness.</p>
+  </main>
+  <footer class="site-footer">
+    <div class="bar">
+      <span>Causal Dynamical Triangulations</span>
+      <span><a href="../about.html">Credits and licences</a> · <a href="../references.html">References</a></span>
+    </div>
+  </footer>
+</body>
+</html>

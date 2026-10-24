@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Causal Dynamical Triangulations</title>
+  <meta name="description" content="An introduction to Causal Dynamical Triangulations, a lattice approach to quantum gravity, and an audited, validated 2D/3D/4D simulation code.">
+  <meta property="og:title" content="Causal Dynamical Triangulations">
+  <meta property="og:description" content="An introduction to Causal Dynamical Triangulations, a lattice approach to quantum gravity, and an audited, validated 2D/3D/4D simulation code.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#14161b" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/site.css">
+  <script>try{var t=localStorage.getItem('cdt-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  <link rel="stylesheet" href="vendor/katex-0.16.11/katex.min.css">
+  <script defer src="vendor/katex-0.16.11/katex.min.js"></script>
+  <script defer src="vendor/katex-0.16.11/contrib/auto-render.min.js"></script>
+  <script defer src="js/site.js"></script>
+  <script type="module" src="js/hero.js"></script>
+  <noscript><style>.hero-sim { display: none; }</style></noscript>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 26 L9 6 L16 26 Z" fill="var(--up)"/><path d="M9 6 L23 6 L16 26 Z" fill="var(--down)"/><path d="M16 26 L23 6 L30 26 Z" fill="var(--up)"/><path d="M2 26 H30 M2 6 H30" stroke="currentColor" stroke-width="1.5"/></svg><span>Causal Dynamical Triangulations</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="learn/index.html" data-section="/learn/">Learn</a></li>
+          <li><a href="learn/simulator.html">Simulator</a></li>
+          <li><a href="research/index.html" data-section="/research/">Research</a></li>
+          <li><a href="references.html">References</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch theme">&#9680;</button>
+    </div>
+  </header>
+  <main id="main" class="wide">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Lattice quantum gravity</p>
+        <h1>Causal Dynamical Triangulations</h1>
+        <p class="lede">Causal Dynamical Triangulations (CDT) is a non-perturbative approach to quantum gravity. It defines the gravitational path integral as a sum over spacetimes assembled from simplices, with a fixed causal structure.</p>
+        <p>This site introduces the method and documents a body of simulation work: an audit of existing CDT codes, which found errors in their Monte Carlo samplers; a corrected codebase for two, three and four dimensions; and a comparison of its results with the published literature.</p>
+        <p class="hero-actions">
+          <a class="button" href="learn/index.html">Introduction</a>
+          <a class="button secondary" href="research/index.html">Research</a>
+        </p>
+      </div>
+      <figure class="hero-sim">
+        <canvas id="hero-canvas" aria-label="A 2D causal triangulation: rows of vertices joined by blue and orange triangles, updated as the simulation runs"></canvas>
+        <figcaption>
+          <span>A 2D CDT simulation running in the browser. Time runs upward; space is periodic in the horizontal direction. <span id="hero-stat"></span></span>
+          <button id="hero-toggle" class="secondary" type="button">Pause</button>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="in-brief" aria-label="Summary">
+      <h2>Summary</h2>
+      <p>Spacetime is approximated by identical building blocks, each spanning one step between neighbouring time slices. A Markov chain samples these configurations with weights given by the discretised Einstein–Hilbert action. In four dimensions, one region of the coupling space produces an extended universe whose average shape matches Euclidean de Sitter space; its spectral dimension is close to four at large scales and decreases towards two at short scales.</p>
+    </section>
+
+    <h2 id="findings">Main findings</h2>
+    <ul class="cards">
+      <li class="card"><h3>Legacy 4D sampler</h3><p>The legacy 4D code constructs valid geometries but uses incorrect acceptance probabilities. For the (2,8)/(8,2) moves alone, the effect is equivalent to shifting \(\kappa_0\) by \(-\ln 4\).</p></li>
+      <li class="card"><h3>Upstream 2D and 3D codes</h3><p>An exact test of the acceptance rules found four errors in the 2D and 3D reference codes. The 3D error corresponds to simulating at \(k_0 - \ln 2\).</p></li>
+      <li class="card"><h3>Validation</h3><p>The corrected code reproduces the published de Sitter profile, phase structure, A–C transition and spectral dimension.</p></li>
+    </ul>
+
+    <h2 id="contents">Contents</h2>
+    <ul class="cards">
+      <li><a class="card" href="learn/index.html"><h3>Introduction</h3><p>The main ideas, without equations.</p></a></li>
+      <li><a class="card" href="learn/physics.html"><h3>Physics</h3><p>The action, couplings, phase diagram and observables.</p></a></li>
+      <li><a class="card" href="learn/moves.html"><h3>Moves</h3><p>The local updates used to sample triangulations.</p></a></li>
+      <li><a class="card" href="learn/simulator.html"><h3>Simulator</h3><p>An interactive 2D CDT simulation.</p></a></li>
+      <li><a class="card" href="research/audit.html"><h3>Audit</h3><p>Where the samplers violate detailed balance, and by how much.</p></a></li>
+      <li><a class="card" href="research/validation.html"><h3>Validation</h3><p>Results compared with published values.</p></a></li>
+    </ul>
+  </main>
+  <footer class="site-footer">
+    <div class="bar">
+      <span>Causal Dynamical Triangulations</span>
+      <span><a href="about.html">Credits and licences</a> · <a href="references.html">References</a></span>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2D CDT simulator · CDT</title>
+  <meta name="description" content="An interactive 2D Causal Dynamical Triangulations Monte Carlo simulation that runs in the browser.">
+  <meta property="og:title" content="2D CDT simulator · CDT">
+  <meta property="og:description" content="An interactive 2D Causal Dynamical Triangulations Monte Carlo simulation that runs in the browser.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#14161b" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/site.css">
+  <script>try{var t=localStorage.getItem('cdt-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  <link rel="stylesheet" href="../vendor/katex-0.16.11/katex.min.css">
+  <script defer src="../vendor/katex-0.16.11/katex.min.js"></script>
+  <script defer src="../vendor/katex-0.16.11/contrib/auto-render.min.js"></script>
+  <link rel="stylesheet" href="../vendor/uplot-1.6.31/uPlot.min.css">
+  <script defer src="../js/site.js"></script>
+  <script type="module" src="../js/simulator.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="../index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 26 L9 6 L16 26 Z" fill="var(--up)"/><path d="M9 6 L23 6 L16 26 Z" fill="var(--down)"/><path d="M16 26 L23 6 L30 26 Z" fill="var(--up)"/><path d="M2 26 H30 M2 6 H30" stroke="currentColor" stroke-width="1.5"/></svg><span>Causal Dynamical Triangulations</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="../learn/index.html" data-section="/learn/">Learn</a></li>
+          <li><a href="../learn/simulator.html">Simulator</a></li>
+          <li><a href="../research/index.html" data-section="/research/">Research</a></li>
+          <li><a href="../references.html">References</a></li>
+          <li><a href="../about.html">About</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch theme">&#9680;</button>
+    </div>
+  </header>
+  <nav class="sub-nav" aria-label="Learn pages">
+    <ul>
+      <li><a href="../learn/index.html">Intro</a></li>
+      <li><a href="../learn/physics.html">Physics</a></li>
+      <li><a href="../learn/moves.html">Moves</a></li>
+      <li><a href="../learn/simulator.html">Simulator</a></li>
+    </ul>
+  </nav>
+  <main id="main" class="wide">
+    <h1>2D CDT simulator</h1>
+    <section class="in-brief" aria-label="Summary">
+      <h2>Summary</h2>
+      <p>This page runs a 2D CDT Monte Carlo simulation in the browser. It displays the current triangulation, the volume profile and its running average, and the acceptance statistics of each move.</p>
+    </section>
+    <noscript><p class="callout">The simulator needs JavaScript.</p></noscript>
+    <div class="panel sim" id="simulator">
+      <div class="sim-grid">
+        <div class="sim-view">
+          <canvas id="sim-canvas" aria-label="The current triangulation: rows of vertices, one per time slice, joined by blue and orange triangles"></canvas>
+          <p id="sim-status" class="sim-status" aria-live="polite"></p>
+          <div class="controls">
+            <button id="sim-run" type="button">Run</button>
+            <button id="sim-step" class="secondary" type="button" title="Propose moves until one is accepted">Step one move</button>
+            <label><input type="checkbox" id="sim-cylinder"> Draw slices to scale</label>
+          </div>
+          <div class="controls sim-sliders">
+            <label>Speed <input type="range" id="sim-speed" min="0" max="100" value="66" aria-describedby="sim-speed-out"></label>
+            <output id="sim-speed-out"></output>
+          </div>
+          <div class="controls sim-sliders">
+            <label>\(\lambda\) <input type="range" id="sim-lambda" min="0.6" max="0.8" step="0.0025" aria-describedby="sim-lambda-out"></label>
+            <output id="sim-lambda-out"></output>
+            <button id="sim-lambda-ln2" class="secondary" type="button">Reset to ln 2</button>
+          </div>
+        </div>
+        <div class="sim-side">
+          <dl class="sim-stats">
+            <dt>Triangles \(N_2\)</dt><dd id="stat-n2">—</dd>
+            <dt>Vertices \(N_0\)</dt><dd id="stat-n0">—</dd>
+            <dt>\(\lambda\)</dt><dd id="stat-lambda">—</dd>
+            <dt>Proposals</dt><dd id="stat-proposals">—</dd>
+            <dt>Speed</dt><dd id="stat-rate">—</dd>
+            <dt>Acceptance</dt><dd id="stat-acc">—</dd>
+            <dt>Last accepted</dt><dd id="stat-last">—</dd>
+            <dt>Profiles averaged</dt><dd id="stat-meas">—</dd>
+          </dl>
+          <div id="sim-profile" class="sim-plot"></div>
+          <div id="sim-volplot" class="sim-plot"></div>
+          <button id="sim-reset-avg" class="secondary" type="button">Restart the average</button>
+        </div>
+      </div>
+      <div class="controls sim-universe">
+        <strong>New universe:</strong>
+        <label>Time slices
+          <select id="sim-slices"><option>8</option><option>16</option><option>24</option><option selected>32</option><option>48</option><option>64</option></select>
+        </label>
+        <label>Target triangles
+          <select id="sim-volume"><option>256</option><option>500</option><option>1000</option><option selected>2000</option><option>4000</option><option>8000</option><option>16000</option></select>
+        </label>
+        <label>Seed <input type="number" id="sim-seed" min="0" step="1"></label>
+        <button id="sim-new" type="button">Build</button>
+        <button id="sim-random-seed" class="secondary" type="button">Random seed</button>
+      </div>
+    </div>
+
+    <h2 id="model">The model</h2>
+    <p>Space is one-dimensional and closed (a circle), and time is periodic, so spacetime has the topology of a torus. Each horizontal row in the display is a spatial slice at fixed time, and every triangle spans one time step, as in the figure on the <a href="index.html#triangles">introduction page</a>. The lengths of the slices change as triangles are added and removed; these are the fluctuations of the spatial volume.</p>
+    <p>The plot shows the <strong>volume profile</strong>, the length of each slice, together with its running average. In 2D the average profile is flat, with large fluctuations; the de Sitter profile discussed elsewhere on this site arises only in 4D. The 2D model is nevertheless useful for illustrating the method, because it is small enough to display and can be solved exactly, which allows the code to be checked.</p>
+
+    <h2 id="how-it-works">Algorithm</h2>
+    <p>The simulation samples triangulations \(T\) with weight \(e^{-\lambda N_2(T)}\), where \(N_2\) is the number of triangles and \(\lambda\) the cosmological constant. Each step selects one of three <a href="moves.html#moves-2d">moves</a> and a location, and accepts the proposal with the Metropolis–Hastings probability. The acceptance ratios include the Hastings factors required for exact sampling:</p>
+    $$a_{\text{add}} = \min\!\left(1,\ \frac{N_0}{N_{\text{vf}} + 1}\, e^{-2\lambda}\right), \qquad a_{\text{delete}} = \min\!\left(1,\ \frac{N_{\text{vf}}}{N_0 - 1}\, e^{2\lambda}\right), \qquad a_{\text{flip}} = \min\!\left(1,\ \frac{w_a}{w_b}\right),$$
+    <p>where \(N_0\) is the number of vertices, \(N_{\text{vf}}\) the number of vertices of order four (the possible locations of a delete move), and \(w_a\), \(w_b\) the numbers of flippable triangle pairs before and after the flip.</p>
+    <p>To hold the volume near a target \(\bar V\), each ratio is multiplied by \(e^{\pm 2\varepsilon}\) according to whether the move brings \(N_2\) closer to or further from \(\bar V\). The simulation starts at \(\lambda = \ln 2\), the critical value of 2D CDT, where this penalty can hold the volume.</p>
+
+    <h2 id="observations">Observations</h2>
+    <ul>
+      <li><strong>Individual moves.</strong> At low speed, or with <em>Step one move</em>, individual additions, deletions and flips can be followed. The counters show the fraction of proposals accepted for each move.</li>
+      <li><strong>Volume fixing.</strong> The number of triangles fluctuates around the target; the penalty \(\varepsilon\,|N_2 - \bar V|\) limits the deviation.</li>
+      <li><strong>Dependence on \(\lambda\).</strong> The linear penalty is weak (\(\varepsilon = 0.02\)) and holds the volume only while \(\lambda\) is within about \(\varepsilon\) of \(\ln 2\). For \(\lambda\) above about 0.72 the volume decreases towards the minimum allowed; below about 0.66 it grows without bound, and the simulation pauses once it exceeds five times the target. The same limitation prevented the legacy 4D code from holding its volume (<a href="../research/audit.html#b5">audit, B5</a>), which is why the corrected code uses a quadratic penalty.</li>
+      <li><strong>Slices to scale.</strong> With this option, the width of each row is proportional to the length of the corresponding slice.</li>
+      <li><strong>Average profile.</strong> Individual profiles are highly irregular. Their average, aligned on the centre of volume, converges to a smooth shape with a characteristic spread, which can be computed exactly in 2D CDT.</li>
+    </ul>
+    <details class="deeper">
+      <summary>Details: origin of the code</summary>
+      <p>The simulator is a JavaScript port of the 2D part of the C++ codebase described on the <a href="../research/code.html">code page</a>, which derives from <a href="https://github.com/JorenB/2d-cdt">2d-cdt</a> by Joren Brunekreef and Andrzej Görlich (MIT licence). It includes the correction to the delete move: at \(N_2 = \bar V\) the original code multiplied by \(e^{+2\varepsilon}\) where the correct factor is \(e^{-2\varepsilon}\), over-accepting these deletions by \(e^{4\varepsilon} \approx 1.083\). The <a href="../research/audit.html#upstream">audit page</a> describes how an exact test of the acceptance ratios identified it.</p>
+    </details>
+  </main>
+  <footer class="site-footer">
+    <div class="bar">
+      <span>Causal Dynamical Triangulations</span>
+      <span><a href="../about.html">Credits and licences</a> · <a href="../references.html">References</a></span>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The physics of CDT · CDT</title>
+  <meta name="description" content="The Regge action, Wick rotation, couplings, phase diagram, emergent de Sitter universe, spectral dimension and quantum Ricci curvature in Causal Dynamical Triangulations.">
+  <meta property="og:title" content="The physics of CDT · CDT">
+  <meta property="og:description" content="The Regge action, Wick rotation, couplings, phase diagram, emergent de Sitter universe, spectral dimension and quantum Ricci curvature in Causal Dynamical Triangulations.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#14161b" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/site.css">
+  <script>try{var t=localStorage.getItem('cdt-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  <link rel="stylesheet" href="../vendor/katex-0.16.11/katex.min.css">
+  <script defer src="../vendor/katex-0.16.11/katex.min.js"></script>
+  <script defer src="../vendor/katex-0.16.11/contrib/auto-render.min.js"></script>
+  <script defer src="../js/site.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="../index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 26 L9 6 L16 26 Z" fill="var(--up)"/><path d="M9 6 L23 6 L16 26 Z" fill="var(--down)"/><path d="M16 26 L23 6 L30 26 Z" fill="var(--up)"/><path d="M2 26 H30 M2 6 H30" stroke="currentColor" stroke-width="1.5"/></svg><span>Causal Dynamical Triangulations</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="../learn/index.html" data-section="/learn/">Learn</a></li>
+          <li><a href="../learn/simulator.html">Simulator</a></li>
+          <li><a href="../research/index.html" data-section="/research/">Research</a></li>
+          <li><a href="../references.html">References</a></li>
+          <li><a href="../about.html">About</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch theme">&#9680;</button>
+    </div>
+  </header>
+  <nav class="sub-nav" aria-label="Learn pages">
+    <ul>
+      <li><a href="../learn/index.html">Intro</a></li>
+      <li><a href="../learn/physics.html">Physics</a></li>
+      <li><a href="../learn/moves.html">Moves</a></li>
+      <li><a href="../learn/simulator.html">Simulator</a></li>
+    </ul>
+  </nav>
+  <main id="main">
+    <h1>The physics of CDT</h1>
+    <section class="in-brief" aria-label="Summary">
+      <h2>Summary</h2>
+      <p>This page sets out how the CDT partition function is defined, the role of the bare couplings, and the principal observables used to characterise the resulting geometries.</p>
+    </section>
+    <p class="lede">This page assumes familiarity with general relativity, path integrals and Monte Carlo methods. A non-technical overview is given in the <a href="index.html">introduction</a>.</p>
+
+    <h2 id="path-integral">The gravitational path integral</h2>
+    <p>The goal is a non-perturbative definition of the gravitational path integral,</p>
+    $$Z = \int_{\mathcal{G}} \mathcal{D}[g]\; e^{\,i S_{\mathrm{EH}}[g]}, \qquad S_{\mathrm{EH}} = \frac{1}{16\pi G}\int d^4x \sqrt{-g}\,(R - 2\Lambda),$$
+    <p>over diffeomorphism classes of Lorentzian metrics. Perturbatively this theory is non-renormalisable, so CDT instead regularises \(Z\) directly as a sum over piecewise-flat geometries and looks for a continuum limit at a critical point of the resulting statistical system. If such a limit exists at a non-Gaussian fixed point, it would be a concrete realisation of Weinberg's asymptotic safety scenario.</p>
+
+    <h2 id="causal-triangulations">Causal triangulations</h2>
+    <p>A causal triangulation is built from simplices whose edges are either spacelike, with squared length \(\ell_s^2 = a^2\), or timelike, with \(\ell_t^2 = -\alpha a^2\) for some \(\alpha &gt; 0\). The triangulation carries a global foliation into spatial slices at integer proper time \(t\). Every simplex spans exactly one time step, \([t, t+1]\), and is classified by how many of its vertices lie on each slice:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Dimension</th><th>Simplex types</th><th>Spatial slices</th></tr></thead>
+        <tbody>
+          <tr><td>2D (1+1)</td><td>(2,1), (1,2) triangles</td><td>circles: closed chains of spacelike links</td></tr>
+          <tr><td>3D (2+1)</td><td>(3,1), (2,2), (1,3) tetrahedra</td><td>2D triangulated surfaces (here spheres)</td></tr>
+          <tr><td>4D (3+1)</td><td>(4,1), (3,2), (2,3), (1,4) pentachora</td><td>3D triangulations of \(S^3\)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The spatial slices may not change topology, so the spacetime topology is fixed, typically \(S^1\times S^2\) in 3D and \(S^1\times S^3\) in 4D (time periodically identified), or the torus in 2D. These restrictions are what distinguish CDT from Euclidean dynamical triangulations, whose 4D ensemble is dominated by crumpled or branched-polymer geometries.</p>
+    <p>The foliation allows a well-defined Wick rotation \(\alpha \to -\alpha\) (with a suitable branch choice of the square roots in the volumes). This maps every Lorentzian causal triangulation to a Euclidean one and turns \(e^{iS}\) into a real Boltzmann weight \(e^{-S_E}\):</p>
+    $$Z = \sum_{T} \frac{1}{C_T}\, e^{-S_E[T]}.$$
+
+    <h2 id="action">The Regge action and the couplings</h2>
+    <p>Regge calculus puts the curvature of a piecewise-flat manifold on its codimension-two hinges, as deficit angles. Because all simplices of a given type are identical, the Regge action of a causal triangulation reduces to a linear combination of a few global counts. In 4D, with \(N_0\) vertices and \(N_{41}\), \(N_{32}\) the numbers of (4,1)+(1,4) and (3,2)+(2,3) simplices, it is</p>
+    $$S_E = -(\kappa_0 + 6\Delta)\,N_0 + \kappa_4\,(N_{41} + N_{32}) + \Delta\,(2N_{41} + N_{32}).$$
+    <ul>
+      <li>\(\kappa_0\) is proportional to the inverse bare Newton constant.</li>
+      <li>\(\kappa_4\) is the bare cosmological constant. It couples to the total volume \(N_4 = N_{41} + N_{32}\) and is tuned to its pseudo-critical value, where the volume neither collapses nor runs away.</li>
+      <li>\(\Delta\) is the asymmetry parameter. It vanishes at \(\alpha = 1\) and controls the relative weight of the two simplex types.</li>
+    </ul>
+    <p>In practice simulations fix the volume, usually by adding \(\varepsilon\,(N_{41} - \bar V)^2\) to the action and measuring only near \(N_{41} = \bar V\). That leaves a two-dimensional phase diagram in \((\kappa_0, \Delta)\).</p>
+    <details class="deeper">
+      <summary>Details: 2D and 3D</summary>
+      <p>In 2D the Gauss–Bonnet theorem makes the curvature term topological, so the action is just the cosmological term, \(S = \lambda N_2\), with \(N_2\) the number of triangles. 2D CDT can be solved exactly (Ambjørn and Loll, 1998). This makes it a useful test case for simulation codes; it is the model run by the <a href="simulator.html">simulator</a>.</p>
+      <p>In 3D the action is \(S = -k_0 N_0 + k_3 N_3\), with \(k_3\) tuned to fix the volume.</p>
+    </details>
+
+    <h2 id="phases">The 4D phase diagram</h2>
+    <p>Simulations at fixed volume find four phases:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Phase</th><th>Typical point</th><th>Geometry</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A</strong></td><td>large \(\kappa_0\), e.g. (5.0, 0)</td><td>Uncorrelated spatial slices. The volume profile is an irregular sequence of maxima and minima, with no extended time direction.</td></tr>
+          <tr><td><strong>B</strong></td><td>small \(\Delta\), e.g. (1.6, 0)</td><td>Collapsed. Essentially all simplices sit in the two sandwiches around a single slice, with the rest of the time direction at the kinematic minimum.</td></tr>
+          <tr><td><strong>C</strong> (de Sitter)</td><td>(2.2, 0.6)</td><td>An extended four-dimensional universe ("blob") with a thin stalk, whose average profile matches Euclidean de Sitter space.</td></tr>
+          <tr><td><strong>C<sub>b</sub></strong></td><td>between B and C</td><td>The "bifurcation" phase, with a distinctive inhomogeneous structure of the spatial slices, found later.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The A–C transition is first order. At \(\Delta = 0.6\) and \(N_4 = 120\text{k}\) it sits at \(\kappa_0 = 4.711\), where the order parameter \(N_0/N_4\) jumps between about 0.153 and 0.163. The transitions bounding phase C towards B are higher order, which makes them candidates for a continuum limit.</p>
+
+    <h2 id="de-sitter">Emergent de Sitter space</h2>
+    <p>In phase C, the expectation value of the spatial volume \(N_3(i)\) at slice \(i\), measured relative to the centre of volume, follows</p>
+    $$\langle N_3(i)\rangle = \frac{N_{41}}{2}\,\frac{3}{4}\,\frac{1}{\tilde s_0 N_{41}^{1/4}}\,\cos^3\!\left(\frac{i}{\tilde s_0 N_{41}^{1/4}}\right),$$
+    <p>which is the volume profile of Euclidean de Sitter space, the round \(S^4\). The width parameter is \(s_0 = 0.59\), defined with \(\tilde s_0 N_{41}^{1/4} = s_0 N_4^{1/4}\). Profiles at different volumes collapse onto one curve when time is scaled by \(N_4^{1/4}\) and volume by \(N_4^{3/4}\): the universe is four-dimensional at large scales.</p>
+    <p>The fluctuations around this profile are described by a minisuperspace action,</p>
+    $$S = k_1 \sum_i \left[\frac{\big(N_3(i+1) - N_3(i)\big)^2}{N_3(i)} + \tilde k_2\, N_3(i)^{1/3}\right],$$
+    <p>with \(k_1 = 0.038\), independent of the volume. This is the discretised action of a homogeneous, isotropic universe; it is obtained from the full sum over triangulations rather than imposed.</p>
+
+    <h2 id="spectral-dimension">Spectral dimension</h2>
+    <p>The spectral dimension measures how fast a random walk spreads. On the dual graph of pentachora (each with five neighbours), let \(K(\sigma)\) be the probability distribution of a walker after \(\sigma\) steps, updated by \(K(j;\sigma+1) = \tfrac15\sum_{k \to j} K(k;\sigma)\). The return probability \(P(\sigma)\) then defines</p>
+    $$D_S(\sigma) = -2\,\frac{d\log P(\sigma)}{d\log\sigma}.$$
+    <p>For a smooth \(d\)-dimensional space, \(D_S = d\). In CDT's phase C, Ambjørn, Jurkiewicz and Loll found</p>
+    $$D_S(\sigma) = 4.02 - \frac{119}{54 + \sigma}$$
+    <p>at \(N_4 = 181\text{k}\), so \(D_S \to 4.02 \pm 0.1\) at large scales and \(D_S(0) = 1.80 \pm 0.25\) at the shortest scales. This scale-dependent dimension, flowing towards two in the ultraviolet, also appears in asymptotic safety, Hořava–Lifshitz gravity and other approaches. At finite volume, \(D_S(\sigma)\) reaches a maximum and then decreases once the walk becomes sensitive to the finite size of the universe.</p>
+
+    <h2 id="curvature">Quantum Ricci curvature</h2>
+    <p>Curvature is difficult to measure directly on a triangulation, because deficit angles fluctuate strongly at the cutoff scale. The <em>quantum Ricci curvature</em> of Klitgaard and Loll compares the average distance \(\bar d(S_p, S_{p'})\) between two spheres of radius \(\delta\) whose centres are a distance \(\delta\) apart. On a smooth space,</p>
+    $$\frac{\bar d(S_p, S_{p'})}{\delta} = c_q\,\big(1 - r_q\,\mathrm{Ric}(v,v)\,\delta^2 + \dots\big),$$
+    <p>so the curvature profile \(\bar d/\delta\) as a function of \(\delta\) carries coarse-grained curvature information. In 2D CDT on the torus it indicates "quantum flatness"; in 4D phase C it is compatible with a positively curved, de Sitter-like geometry.</p>
+
+    <details class="deeper">
+      <summary>Details: the Monte Carlo method</summary>
+      <p>Simulations sample \(\pi(T) \propto e^{-S_E[T]}\) with a Metropolis–Hastings chain of local moves. A proposal \(T \to T'\) is accepted with probability</p>
+      $$a(T\to T') = \min\!\left(1,\; \frac{q(T'\to T)}{q(T\to T')}\; e^{-(S_E[T'] - S_E[T])}\right),$$
+      <p>where \(q\) is the probability of proposing the move. The ratio of proposal probabilities, the Hastings factor, depends on how many sites the code can pick each move from, before and after the move. If it is incorrect or omitted, the chain samples a different distribution. This is the subject of the <a href="../research/audit.html">audit</a>.</p>
+    </details>
+
+    <h2 id="sources">Sources</h2>
+    <p>The numbers on this page come from Ambjørn, Jurkiewicz and Loll, <a href="https://arxiv.org/abs/hep-th/0505154">hep-th/0505154</a> and <a href="https://arxiv.org/abs/hep-th/0505113">hep-th/0505113</a>; Ambjørn, Görlich, Jurkiewicz and Loll, <a href="https://arxiv.org/abs/0807.4481">0807.4481</a> and the review <a href="https://arxiv.org/abs/1203.3591">1203.3591</a>; and Klitgaard and Loll, <a href="https://arxiv.org/abs/1712.08847">1712.08847</a>. For a full reading list, see the <a href="../references.html">references</a>.</p>
+  </main>
+  <footer class="site-footer">
+    <div class="bar">
+      <span>Causal Dynamical Triangulations</span>
+      <span><a href="../about.html">Credits and licences</a> · <a href="../references.html">References</a></span>
+    </div>
+  </footer>
+</body>
+</html>

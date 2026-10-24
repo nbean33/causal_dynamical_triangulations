@@ -1,0 +1,90 @@
+{
+ "source_repo": "CDT_4d-master",
+ "commit": "5ef5eb81a4269f21489078e10a575353712a3139",
+ "branch": "phase8-curvature-bench-ckpt",
+ "inputs_uncommitted_changes": [],
+ "generated_at": "2026-10-24T20:22:49+00:00",
+ "script": "tools/sync_from_cdt.py",
+ "files": [
+  {
+   "path": "data/targets.json",
+   "bytes": 7096
+  },
+  {
+   "path": "data/desitter.json",
+   "bytes": 30420
+  },
+  {
+   "path": "data/spectral.json",
+   "bytes": 23691
+  },
+  {
+   "path": "data/phases.json",
+   "bytes": 146163
+  },
+  {
+   "path": "data/fluctuations.json",
+   "bytes": 2683
+  },
+  {
+   "path": "data/curvature2d.json",
+   "bytes": 33116
+  },
+  {
+   "path": "data/references.json",
+   "bytes": 91560
+  },
+  {
+   "path": "data/reading.json",
+   "bytes": 4112
+  },
+  {
+   "path": "assets/fig/lisp-validation/desitter_stationary.png",
+   "bytes": 88406
+  },
+  {
+   "path": "assets/fig/lisp-validation/equilibration.png",
+   "bytes": 255146
+  },
+  {
+   "path": "assets/fig/lisp-validation/fluct_10k.png",
+   "bytes": 46109
+  },
+  {
+   "path": "assets/fig/lisp-validation/phases_profiles.png",
+   "bytes": 320490
+  },
+  {
+   "path": "assets/fig/lisp-validation/spectral.png",
+   "bytes": 23114
+  },
+  {
+   "path": "assets/fig/large-volume/desitter_collapse.png",
+   "bytes": 100420
+  },
+  {
+   "path": "assets/fig/large-volume/histories.png",
+   "bytes": 192011
+  },
+  {
+   "path": "assets/fig/large-volume/spectral.png",
+   "bytes": 47371
+  },
+  {
+   "path": "assets/fig/curvature2d/bug_vs_fixed.png",
+   "bytes": 24553
+  },
+  {
+   "path": "assets/fig/curvature2d/dt_profiles.png",
+   "bytes": 46367
+  },
+  {
+   "path": "assets/fig/curvature2d/profile_dual.png",
+   "bytes": 57910
+  },
+  {
+   "path": "assets/fig/curvature2d/profile_link.png",
+   "bytes": 76174
+  }
+ ]
+}

@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Introduction · CDT</title>
+  <meta name="description" content="An introduction to Causal Dynamical Triangulations: the problem of quantum gravity, the path integral over geometries, triangulated spacetime and the role of causality.">
+  <meta property="og:title" content="Introduction · CDT">
+  <meta property="og:description" content="An introduction to Causal Dynamical Triangulations: the problem of quantum gravity, the path integral over geometries, triangulated spacetime and the role of causality.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#14161b" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/site.css">
+  <script>try{var t=localStorage.getItem('cdt-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  <link rel="stylesheet" href="../vendor/katex-0.16.11/katex.min.css">
+  <script defer src="../vendor/katex-0.16.11/katex.min.js"></script>
+  <script defer src="../vendor/katex-0.16.11/contrib/auto-render.min.js"></script>
+  <script defer src="../js/site.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="../index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 26 L9 6 L16 26 Z" fill="var(--up)"/><path d="M9 6 L23 6 L16 26 Z" fill="var(--down)"/><path d="M16 26 L23 6 L30 26 Z" fill="var(--up)"/><path d="M2 26 H30 M2 6 H30" stroke="currentColor" stroke-width="1.5"/></svg><span>Causal Dynamical Triangulations</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="../learn/index.html" data-section="/learn/">Learn</a></li>
+          <li><a href="../learn/simulator.html">Simulator</a></li>
+          <li><a href="../research/index.html" data-section="/research/">Research</a></li>
+          <li><a href="../references.html">References</a></li>
+          <li><a href="../about.html">About</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch theme">&#9680;</button>
+    </div>
+  </header>
+  <nav class="sub-nav" aria-label="Learn pages">
+    <ul>
+      <li><a href="../learn/index.html">Intro</a></li>
+      <li><a href="../learn/physics.html">Physics</a></li>
+      <li><a href="../learn/moves.html">Moves</a></li>
+      <li><a href="../learn/simulator.html">Simulator</a></li>
+    </ul>
+  </nav>
+  <main id="main">
+    <h1>An introduction to CDT</h1>
+    <section class="in-brief" aria-label="Summary">
+      <h2>Summary</h2>
+      <p>In general relativity, gravity is the geometry of spacetime. A quantum theory of gravity must therefore assign probabilities to geometries. CDT does this by summing over spacetimes built from identical simplices, subject to a fixed causal structure, and evaluating the sum numerically.</p>
+    </section>
+    <h2 id="gravity-is-geometry">Gravity as geometry</h2>
+    <p>In general relativity, gravity is not described as a force. Mass and energy curve <em>spacetime</em>, the four-dimensional combination of space and time, and freely falling bodies follow geodesics, the straightest available paths in that geometry. The orbit of the Earth around the Sun is a geodesic in the curved spacetime around the Sun.</p>
+    <p>General relativity agrees with all current observations, from the deflection of starlight to gravitational waves from black-hole mergers. It is, however, a <em>classical</em> theory: the geometry of spacetime has a single definite value.</p>
+
+    <h2 id="why-quantum">The problem of quantum gravity</h2>
+    <p>Matter is described by quantum theory, which assigns probabilities to possible outcomes rather than predicting a single one. Since matter determines the geometry of spacetime, the geometry is expected to be subject to quantum effects as well. A combined description is needed wherever quantum effects and strong gravitational fields are both important, for example near the initial singularity of cosmology or inside black holes.</p>
+    <p>The standard perturbative method of quantising a field theory, which is successful for electromagnetism and the nuclear interactions, fails for gravity: the theory is not renormalisable, and its predictions depend on infinitely many undetermined parameters. Several alternatives have been proposed, including string theory, loop quantum gravity and asymptotic safety. CDT retains the Einstein–Hilbert action and attempts a non-perturbative definition of the quantum theory that can be evaluated numerically.</p>
+
+    <h2 id="sum-over-shapes">The path integral over geometries</h2>
+    <p>In Feynman's path-integral formulation of quantum mechanics, the amplitude for a particle to travel between two points is a sum of contributions from all possible paths, each weighted by the classical action.</p>
+    <p>For gravity, the analogous sum runs over all spacetime geometries compatible with given boundary conditions, each weighted by the Einstein–Hilbert action. Without further structure this sum is not well defined: the space of geometries is infinite-dimensional, and there is no direct way to perform the sum. A regularisation is required.</p>
+
+    <h2 id="triangles">Triangulated spacetime</h2>
+    <p>A smooth curved surface can be approximated by flat triangles glued along their edges. The curvature is then concentrated at the vertices: where fewer than six equilateral triangles meet, the surface is positively curved, like the apex of a cone; where more than six meet, it is negatively curved, like a saddle.</p>
+    <p>CDT uses the same idea in higher dimensions, with identical simplices as building blocks: triangles in two dimensions, tetrahedra in three, and 4-simplices (pentachora) in four. Each way of gluing them together represents one geometry, so the sum over geometries becomes a sum over triangulations. The continuum theory is sought in the limit where the simplices become small and their number large.</p>
+
+    <figure>
+      <svg class="strip" viewBox="0 0 600 260" role="img" aria-labelledby="strip-title">
+      <title id="strip-title">A small 2D causal triangulation: horizontal spatial slices joined by triangles that each span one time step</title>
+      <polygon class="tri-down" points="20.0,240.0 20.0,185.0 54.9,185.0"/>
+      <polygon class="tri-up" points="20.0,240.0 60.6,240.0 54.9,185.0"/>
+      <polygon class="tri-down" points="60.6,240.0 54.9,185.0 65.7,185.0"/>
+      <polygon class="tri-down" points="60.6,240.0 65.7,185.0 72.0,185.0"/>
+      <polygon class="tri-down" points="60.6,240.0 72.0,185.0 83.1,185.0"/>
+      <polygon class="tri-up" points="60.6,240.0 84.9,240.0 83.1,185.0"/>
+      <polygon class="tri-up" points="84.9,240.0 244.3,240.0 83.1,185.0"/>
+      <polygon class="tri-down" points="244.3,240.0 83.1,185.0 260.0,185.0"/>
+      <polygon class="tri-down" points="244.3,240.0 260.0,185.0 264.8,185.0"/>
+      <polygon class="tri-down" points="244.3,240.0 264.8,185.0 303.9,185.0"/>
+      <polygon class="tri-up" points="244.3,240.0 470.3,240.0 303.9,185.0"/>
+      <polygon class="tri-up" points="470.3,240.0 537.4,240.0 303.9,185.0"/>
+      <polygon class="tri-up" points="537.4,240.0 580.0,240.0 303.9,185.0"/>
+      <polygon class="tri-down" points="580.0,240.0 303.9,185.0 580.0,185.0"/>
+      <polygon class="tri-up" points="20.0,185.0 54.9,185.0 20.0,130.0"/>
+      <polygon class="tri-up" points="54.9,185.0 65.7,185.0 20.0,130.0"/>
+      <polygon class="tri-up" points="65.7,185.0 72.0,185.0 20.0,130.0"/>
+      <polygon class="tri-up" points="72.0,185.0 83.1,185.0 20.0,130.0"/>
+      <polygon class="tri-down" points="83.1,185.0 20.0,130.0 100.6,130.0"/>
+      <polygon class="tri-down" points="83.1,185.0 100.6,130.0 153.3,130.0"/>
+      <polygon class="tri-down" points="83.1,185.0 153.3,130.0 245.2,130.0"/>
+      <polygon class="tri-up" points="83.1,185.0 260.0,185.0 245.2,130.0"/>
+      <polygon class="tri-up" points="260.0,185.0 264.8,185.0 245.2,130.0"/>
+      <polygon class="tri-up" points="264.8,185.0 303.9,185.0 245.2,130.0"/>
+      <polygon class="tri-down" points="303.9,185.0 245.2,130.0 340.9,130.0"/>
+      <polygon class="tri-down" points="303.9,185.0 340.9,130.0 367.5,130.0"/>
+      <polygon class="tri-down" points="303.9,185.0 367.5,130.0 537.3,130.0"/>
+      <polygon class="tri-down" points="303.9,185.0 537.3,130.0 552.4,130.0"/>
+      <polygon class="tri-up" points="303.9,185.0 580.0,185.0 552.4,130.0"/>
+      <polygon class="tri-down" points="580.0,185.0 552.4,130.0 580.0,130.0"/>
+      <polygon class="tri-up" points="20.0,130.0 100.6,130.0 20.0,75.0"/>
+      <polygon class="tri-down" points="100.6,130.0 20.0,75.0 105.6,75.0"/>
+      <polygon class="tri-up" points="100.6,130.0 153.3,130.0 105.6,75.0"/>
+      <polygon class="tri-up" points="153.3,130.0 245.2,130.0 105.6,75.0"/>
+      <polygon class="tri-down" points="245.2,130.0 105.6,75.0 257.1,75.0"/>
+      <polygon class="tri-down" points="245.2,130.0 257.1,75.0 330.0,75.0"/>
+      <polygon class="tri-up" points="245.2,130.0 340.9,130.0 330.0,75.0"/>
+      <polygon class="tri-up" points="340.9,130.0 367.5,130.0 330.0,75.0"/>
+      <polygon class="tri-up" points="367.5,130.0 537.3,130.0 330.0,75.0"/>
+      <polygon class="tri-up" points="537.3,130.0 552.4,130.0 330.0,75.0"/>
+      <polygon class="tri-up" points="552.4,130.0 580.0,130.0 330.0,75.0"/>
+      <polygon class="tri-down" points="580.0,130.0 330.0,75.0 580.0,75.0"/>
+      <polygon class="tri-down" points="20.0,75.0 20.0,20.0 97.4,20.0"/>
+      <polygon class="tri-up" points="20.0,75.0 105.6,75.0 97.4,20.0"/>
+      <polygon class="tri-down" points="105.6,75.0 97.4,20.0 130.8,20.0"/>
+      <polygon class="tri-down" points="105.6,75.0 130.8,20.0 198.5,20.0"/>
+      <polygon class="tri-down" points="105.6,75.0 198.5,20.0 232.4,20.0"/>
+      <polygon class="tri-up" points="105.6,75.0 257.1,75.0 232.4,20.0"/>
+      <polygon class="tri-up" points="257.1,75.0 330.0,75.0 232.4,20.0"/>
+      <polygon class="tri-down" points="330.0,75.0 232.4,20.0 343.2,20.0"/>
+      <polygon class="tri-down" points="330.0,75.0 343.2,20.0 373.6,20.0"/>
+      <polygon class="tri-down" points="330.0,75.0 373.6,20.0 467.5,20.0"/>
+      <polygon class="tri-up" points="330.0,75.0 580.0,75.0 467.5,20.0"/>
+      <polygon class="tri-down" points="580.0,75.0 467.5,20.0 580.0,20.0"/>
+      <line class="slice" x1="20" y1="240.0" x2="580" y2="240.0"/>
+      <circle class="vtx" cx="20.0" cy="240.0" r="3"/>
+      <circle class="vtx" cx="60.6" cy="240.0" r="3"/>
+      <circle class="vtx" cx="84.9" cy="240.0" r="3"/>
+      <circle class="vtx" cx="244.3" cy="240.0" r="3"/>
+      <circle class="vtx" cx="470.3" cy="240.0" r="3"/>
+      <circle class="vtx" cx="537.4" cy="240.0" r="3"/>
+      <circle class="vtx" cx="580.0" cy="240.0" r="3"/>
+      <line class="slice" x1="20" y1="185.0" x2="580" y2="185.0"/>
+      <circle class="vtx" cx="20.0" cy="185.0" r="3"/>
+      <circle class="vtx" cx="54.9" cy="185.0" r="3"/>
+      <circle class="vtx" cx="65.7" cy="185.0" r="3"/>
+      <circle class="vtx" cx="72.0" cy="185.0" r="3"/>
+      <circle class="vtx" cx="83.1" cy="185.0" r="3"/>
+      <circle class="vtx" cx="260.0" cy="185.0" r="3"/>
+      <circle class="vtx" cx="264.8" cy="185.0" r="3"/>
+      <circle class="vtx" cx="303.9" cy="185.0" r="3"/>
+      <circle class="vtx" cx="580.0" cy="185.0" r="3"/>
+      <line class="slice" x1="20" y1="130.0" x2="580" y2="130.0"/>
+      <circle class="vtx" cx="20.0" cy="130.0" r="3"/>
+      <circle class="vtx" cx="100.6" cy="130.0" r="3"/>
+      <circle class="vtx" cx="153.3" cy="130.0" r="3"/>
+      <circle class="vtx" cx="245.2" cy="130.0" r="3"/>
+      <circle class="vtx" cx="340.9" cy="130.0" r="3"/>
+      <circle class="vtx" cx="367.5" cy="130.0" r="3"/>
+      <circle class="vtx" cx="537.3" cy="130.0" r="3"/>
+      <circle class="vtx" cx="552.4" cy="130.0" r="3"/>
+      <circle class="vtx" cx="580.0" cy="130.0" r="3"/>
+      <line class="slice" x1="20" y1="75.0" x2="580" y2="75.0"/>
+      <circle class="vtx" cx="20.0" cy="75.0" r="3"/>
+      <circle class="vtx" cx="105.6" cy="75.0" r="3"/>
+      <circle class="vtx" cx="257.1" cy="75.0" r="3"/>
+      <circle class="vtx" cx="330.0" cy="75.0" r="3"/>
+      <circle class="vtx" cx="580.0" cy="75.0" r="3"/>
+      <line class="slice" x1="20" y1="20.0" x2="580" y2="20.0"/>
+      <circle class="vtx" cx="20.0" cy="20.0" r="3"/>
+      <circle class="vtx" cx="97.4" cy="20.0" r="3"/>
+      <circle class="vtx" cx="130.8" cy="20.0" r="3"/>
+      <circle class="vtx" cx="198.5" cy="20.0" r="3"/>
+      <circle class="vtx" cx="232.4" cy="20.0" r="3"/>
+      <circle class="vtx" cx="343.2" cy="20.0" r="3"/>
+      <circle class="vtx" cx="373.6" cy="20.0" r="3"/>
+      <circle class="vtx" cx="467.5" cy="20.0" r="3"/>
+      <circle class="vtx" cx="580.0" cy="20.0" r="3"/>
+      </svg>
+      <figcaption>A small region of a 2D causal triangulation. Each horizontal line is a spatial slice at fixed time, with time increasing upward. Every triangle spans exactly one time step: blue triangles have their base on the earlier slice, orange triangles on the later one.</figcaption>
+    </figure>
+
+    <h2 id="causality">The role of causality</h2>
+    <p>An earlier approach, Euclidean dynamical triangulations, includes all ways of gluing the simplices together. In four dimensions its typical configurations are either crumpled, with very small extent, or elongated branched polymers. Neither resembles an extended four-dimensional spacetime.</p>
+    <p>In 1998 Ambjørn and Loll proposed restricting the sum to triangulations with a causal structure. Spacetime is foliated into spatial slices at successive integer times, and every simplex connects two neighbouring slices, as in the figure above. The spatial geometry may change from one slice to the next, but its topology may not, so space cannot split into disconnected parts.</p>
+    <p>With this restriction, the large-scale behaviour of the simulated geometries changes qualitatively, and in four dimensions an extended spacetime appears in part of the phase diagram.</p>
+
+    <h2 id="monte-carlo">Monte Carlo simulation</h2>
+    <p>The number of triangulations grows too quickly for them to be enumerated. Instead, they are sampled with a <strong>Markov chain Monte Carlo</strong> method:</p>
+    <ol>
+      <li>Start from an initial triangulation.</li>
+      <li>Propose a small local change, called a <a href="moves.html">move</a>, for example replacing two triangles by four, or exchanging the diagonal shared by two triangles.</li>
+      <li>Accept or reject the change with a probability chosen so that, in equilibrium, each triangulation occurs with a frequency proportional to its weight.</li>
+      <li>Repeat many times, measuring observables along the way.</li>
+    </ol>
+    <p>The acceptance probability in step 3 must account for how likely each move is to be proposed. The <a href="../research/audit.html">audit</a> on this site describes simulation codes in which this was done incorrectly, so that they sample a different distribution from the intended one.</p>
+    <p>A 2D simulation of this kind can be run in the <a href="simulator.html">simulator</a>.</p>
+
+    <h2 id="results">Principal results</h2>
+    <p>Four-dimensional CDT simulations have established the following:</p>
+    <ul>
+      <li><strong>An extended universe.</strong> In one phase, the simplices form an extended four-dimensional geometry whose average volume profile agrees with Euclidean de Sitter space, the geometry of a universe dominated by a positive cosmological constant. This shape is not imposed; it results from the sum over triangulations.</li>
+      <li><strong>Four dimensions at large scales.</strong> The spectral dimension, defined by the return probability of a random walk, is close to four at large scales.</li>
+      <li><strong>Dimensional reduction at short scales.</strong> At short scales the spectral dimension decreases towards two. A similar reduction appears in several other approaches to quantum gravity.</li>
+      <li><strong>A phase diagram.</strong> Depending on the bare couplings, the geometries fall into distinct phases separated by phase transitions. Only one phase contains an extended four-dimensional universe.</li>
+    </ul>
+
+    <details class="deeper">
+      <summary>Details: the definition of the sum</summary>
+      <p>Formally, the quantum theory is defined by a path integral over spacetime metrics \(g\), weighted by the Einstein–Hilbert action:</p>
+      $$Z = \int \mathcal{D}[g]\; e^{\,i S_{\mathrm{EH}}[g]/\hbar}.$$
+      <p>CDT replaces the integral by a sum over causal triangulations \(T\), with the action evaluated by Regge's formula for piecewise-flat geometries:</p>
+      $$Z = \sum_{T} \frac{1}{C_T}\, e^{-S_{\mathrm{Regge}}[T]},$$
+      <p>where \(C_T\) is the order of the symmetry group of \(T\). The factor \(i\) is absent because the causal structure permits a well-defined Wick rotation to imaginary time, which turns the oscillating phases into real, positive weights that can be sampled by Monte Carlo methods. The <a href="physics.html">physics page</a> gives the details.</p>
+    </details>
+
+    <h2 id="next">Further pages</h2>
+    <ul class="cards">
+      <li><a class="card" href="physics.html"><h3>Physics</h3><p>The action, couplings, phase diagram and observables, with equations.</p></a></li>
+      <li><a class="card" href="moves.html"><h3>Moves</h3><p>The local updates used in 2D, 3D and 4D.</p></a></li>
+      <li><a class="card" href="simulator.html"><h3>Simulator</h3><p>An interactive 2D CDT simulation.</p></a></li>
+      <li><a class="card" href="../research/index.html"><h3>Research</h3><p>The audit, correction and validation of the simulation codes.</p></a></li>
+    </ul>
+  </main>
+  <footer class="site-footer">
+    <div class="bar">
+      <span>Causal Dynamical Triangulations</span>
+      <span><a href="../about.html">Credits and licences</a> · <a href="../references.html">References</a></span>
+    </div>
+  </footer>
+</body>
+</html>

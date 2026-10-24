@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Research overview · CDT</title>
+  <meta name="description" content="Overview of an audit, correction and validation of 2D, 3D and 4D Causal Dynamical Triangulations simulation codes.">
+  <meta property="og:title" content="Research overview · CDT">
+  <meta property="og:description" content="Overview of an audit, correction and validation of 2D, 3D and 4D Causal Dynamical Triangulations simulation codes.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#14161b" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/site.css">
+  <script>try{var t=localStorage.getItem('cdt-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  <link rel="stylesheet" href="../vendor/katex-0.16.11/katex.min.css">
+  <script defer src="../vendor/katex-0.16.11/katex.min.js"></script>
+  <script defer src="../vendor/katex-0.16.11/contrib/auto-render.min.js"></script>
+  <script defer src="../js/site.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="../index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 26 L9 6 L16 26 Z" fill="var(--up)"/><path d="M9 6 L23 6 L16 26 Z" fill="var(--down)"/><path d="M16 26 L23 6 L30 26 Z" fill="var(--up)"/><path d="M2 26 H30 M2 6 H30" stroke="currentColor" stroke-width="1.5"/></svg><span>Causal Dynamical Triangulations</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="../learn/index.html" data-section="/learn/">Learn</a></li>
+          <li><a href="../learn/simulator.html">Simulator</a></li>
+          <li><a href="../research/index.html" data-section="/research/">Research</a></li>
+          <li><a href="../references.html">References</a></li>
+          <li><a href="../about.html">About</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch theme">&#9680;</button>
+    </div>
+  </header>
+  <nav class="sub-nav" aria-label="Research pages">
+    <ul>
+      <li><a href="../research/index.html">Overview</a></li>
+      <li><a href="../research/audit.html">Audit</a></li>
+      <li><a href="../research/code.html">Code</a></li>
+      <li><a href="../research/validation.html">Validation</a></li>
+      <li><a href="../research/roadmap.html">Status</a></li>
+    </ul>
+  </nav>
+  <main id="main">
+    <h1>Research overview</h1>
+    <section class="in-brief" aria-label="Summary">
+      <h2>Summary</h2>
+      <p>The legacy 4D CDT code was audited and its Monte Carlo sampler found to be biased. A corrected sampler was written, the 2D, 3D and 4D codes were combined into a single C++ codebase, and the results were compared with published values.</p>
+    </section>
+    <h2 id="starting-point">Background</h2>
+    <p>The starting point was a set of legacy CDT codes written in Common Lisp at UC Davis: a 2+1-dimensional code and a 3+1-dimensional (4D) code by Rajesh Kommu, a Hořava–Lifshitz variant by Christian Anderson, and fixed-boundary versions by Jonah Miller and David Kamensky. The aim was to obtain a code suitable for new 4D measurements and, eventually, a single codebase covering two, three and four dimensions.</p>
+    <p>Results from a simulation code are meaningful only if it samples the intended probability distribution. The first step was therefore an audit.</p>
+
+    <h2 id="steps">Stages of the work</h2>
+    <ol>
+      <li><strong>Audit.</strong> The 4D Lisp code was compared with the paper of Ambjørn, Jurkiewicz and Loll and with five reference codes, using an independent invariant checker and an exact enumeration of its proposal kernel. The geometry is correct, including all ten moves, the Regge action and the bookkeeping. The Monte Carlo sampler violates detailed balance in several respects, so its results cannot be compared quantitatively with the literature. <a href="audit.html">Audit</a>.</li>
+      <li><strong>Correction.</strong> A corrected Metropolis–Hastings sampler was written for the same geometry, with O(1) site bags, one site per proposal, exact Hastings factors and quadratic volume fixing. An exact kernel test over more than 2,300 move instances confirms detailed balance to \(2\cdot10^{-15}\), with no irreversible moves.</li>
+      <li><strong>Unified codebase.</strong> A single C++ codebase for 2D, 3D and 4D CDT was built from JorenB's 2d-cdt and 3d-cdt, with the corrected 4D sampler ported to it. The same kernel test applied to the upstream 2D and 3D codes found four acceptance-ratio errors, which have been corrected. The 4D port agrees with the Lisp code move by move and is about 6.5 times faster. <a href="code.html">Code</a>.</li>
+      <li><strong>Validation.</strong> The corrected codes were compared with published results: the de Sitter profile, the volume fluctuations, the phase structure, the A–C transition and the spectral dimension in 4D, and the quantum Ricci curvature profile in 2D. They agree wherever the available volumes permit a test. <a href="validation.html">Validation</a>.</li>
+    </ol>
+
+    <h2 id="findings">Main findings</h2>
+    <ul>
+      <li>The legacy 4D sampler has no Hastings factor. For the (2,8)/(8,2) pair this is equivalent to shifting \(\kappa_0\) by \(-\ln 4 \approx -1.39\); for the other moves the bias depends on the local configuration. About 1% of (4,6) moves cannot be reversed.</li>
+      <li>The upstream 3D code (3d-cdt) used an incorrect Hastings factor for its add and delete moves, and therefore effectively simulated \(k_0 - \ln 2\) rather than the configured \(k_0\). The upstream 2D code over-accepted deletions at the target volume by 8%.</li>
+      <li>The corrected 4D code reproduces the published phase B, the location of the A–C transition and the jump of \(N_0/N_4\) across it, the ratio \(N_{32}/N_{41}\), the fluctuation coefficient \(k_1 = 0.0389 \pm 0.0011\) (published 0.038), the de Sitter width \(s_0 = 0.56 \pm 0.04\) (published 0.59), and the spectral dimension within its errors (about 0.02) of the published curve up to \(\sigma = 100\).</li>
+      <li>An earlier failure to reproduce phase B at small volume is explained by a slow, metastable state, not by a difference between the codes.</li>
+      <li>The 2D curvature profiles of Brunekreef and Loll (arXiv:2110.11100) are reproduced; the error in the upstream 2D code has no visible effect on them.</li>
+    </ul>
+
+    <h2 id="principles">Methodology</h2>
+    <ul>
+      <li><strong>Original sources unmodified.</strong> Every audit was run on the original sources. Corrected versions are kept separately, so that the two can be compared.</li>
+      <li><strong>Exact tests of the sampler.</strong> On small triangulations every possible proposal can be enumerated, so the ratio of forward and backward proposal probabilities can be compared with the acceptance rule to machine precision.</li>
+      <li><strong>Byte-identical baselines.</strong> Each change to imported code is checked against fixed-seed outputs, which it either reproduces exactly or changes in a documented way.</li>
+      <li><strong>Comparison with published values,</strong> with each result classified as agreeing, partially agreeing, or not reproduced.</li>
+    </ul>
+
+    <ul class="cards">
+      <li><a class="card" href="audit.html"><h3>Audit</h3><p>Errors in the samplers, with exact figures.</p></a></li>
+      <li><a class="card" href="code.html"><h3>Code</h3><p>The unified 2D/3D/4D C++ codebase, its tests and performance.</p></a></li>
+      <li><a class="card" href="validation.html"><h3>Validation</h3><p>Interactive comparisons with published results.</p></a></li>
+      <li><a class="card" href="roadmap.html"><h3>Status</h3><p>Completed work, open questions and planned work.</p></a></li>
+    </ul>
+  </main>
+  <footer class="site-footer">
+    <div class="bar">
+      <span>Causal Dynamical Triangulations</span>
+      <span><a href="../about.html">Credits and licences</a> · <a href="../references.html">References</a></span>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Unified codebase · CDT</title>
+  <meta name="description" content="Architecture, development phases, tests and performance of the unified C++ Causal Dynamical Triangulations codebase.">
+  <meta property="og:title" content="Unified codebase · CDT">
+  <meta property="og:description" content="Architecture, development phases, tests and performance of the unified C++ Causal Dynamical Triangulations codebase.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#14161b" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/site.css">
+  <script>try{var t=localStorage.getItem('cdt-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  <link rel="stylesheet" href="../vendor/katex-0.16.11/katex.min.css">
+  <script defer src="../vendor/katex-0.16.11/katex.min.js"></script>
+  <script defer src="../vendor/katex-0.16.11/contrib/auto-render.min.js"></script>
+  <script defer src="../js/site.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="../index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 26 L9 6 L16 26 Z" fill="var(--up)"/><path d="M9 6 L23 6 L16 26 Z" fill="var(--down)"/><path d="M16 26 L23 6 L30 26 Z" fill="var(--up)"/><path d="M2 26 H30 M2 6 H30" stroke="currentColor" stroke-width="1.5"/></svg><span>Causal Dynamical Triangulations</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="../learn/index.html" data-section="/learn/">Learn</a></li>
+          <li><a href="../learn/simulator.html">Simulator</a></li>
+          <li><a href="../research/index.html" data-section="/research/">Research</a></li>
+          <li><a href="../references.html">References</a></li>
+          <li><a href="../about.html">About</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch theme">&#9680;</button>
+    </div>
+  </header>
+  <nav class="sub-nav" aria-label="Research pages">
+    <ul>
+      <li><a href="../research/index.html">Overview</a></li>
+      <li><a href="../research/audit.html">Audit</a></li>
+      <li><a href="../research/code.html">Code</a></li>
+      <li><a href="../research/validation.html">Validation</a></li>
+      <li><a href="../research/roadmap.html">Status</a></li>
+    </ul>
+  </nav>
+  <main id="main">
+    <h1>Unified C++ codebase</h1>
+    <section class="in-brief" aria-label="Summary">
+      <h2>Summary</h2>
+      <p>A single C++ codebase simulates CDT in two, three and four dimensions. It includes exact kernel tests, exact checkpointing, and a move-by-move comparison with the original Lisp code.</p>
+    </section>
+    <h2 id="design">Design</h2>
+    <p>The codebase keeps the design of JorenB's <a href="https://github.com/JorenB/2d-cdt">2d-cdt</a> and <a href="https://github.com/JorenB/3d-cdt">3d-cdt</a> (Brunekreef, Németh and Görlich; MIT licence), described in their methods paper <a href="https://arxiv.org/abs/2310.16744">2310.16744</a>:</p>
+    <ul>
+      <li>simplices and vertices live in fixed-size <code>Pool</code>s and are referred to by <code>Label</code>s;</li>
+      <li>random move sites are drawn from O(1) <code>Bag</code>s that support uniform pick, insert and remove;</li>
+      <li>static <code>Universe</code> and <code>Simulation</code> classes, <code>Observable</code> subclasses, and a key–value <code>config.dat</code>;</li>
+      <li>one Markov chain per process, so many chains run in parallel with no shared state.</li>
+    </ul>
+    <p>The 2D and 3D parts are the upstream codes, kept in their original style, with every change listed and justified. The 4D part is new: a port of the corrected Lisp sampler, written in the same style.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Path</th><th>Contents</th></tr></thead>
+        <tbody>
+          <tr><td><code>common/</code></td><td>Pool, Bag, config reader, seeded RNG engines, per-move counters and timers, checkpoint helpers, graph algorithms (BFS spheres, dual-graph diffusion, average sphere distance)</td></tr>
+          <tr><td><code>2d/</code></td><td>2D CDT from 2d-cdt: vertex, link, triangle, universe, simulation; observables for volume profile, Hausdorff dimension, Ricci and curvature profiles, spectral dimension</td></tr>
+          <tr><td><code>3d/</code></td><td>3D CDT from 3d-cdt: vertex, half-edge, triangle, tetrahedron, universe, simulation, observables</td></tr>
+          <tr><td><code>4d/</code></td><td>4D CDT ported from the corrected Lisp sampler: vertex, pentachoron, the ten moves, face bookkeeping, geometry I/O compatible with the Lisp code; observables for volume profiles, spectral and Hausdorff dimension, curvature profile</td></tr>
+          <tr><td><code>tests/</code></td><td>fixed-seed baselines, invariant recounts, stress runs, exact kernel tests for every dimension, checkpoint tests, a Lisp replay</td></tr>
+          <tr><td><code>analysis/</code></td><td>dimension-independent analysis: profiles, volume–volume correlator, spectral and Hausdorff dimension, autocorrelation times</td></tr>
+          <tr><td><code>validation/</code></td><td>the studies on the <a href="validation.html">validation page</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>It is written in C++14 with plain Makefiles and no dependencies beyond the standard library (OpenMP is optional, for observables).</p>
+
+    <h2 id="phases">Development phases</h2>
+    <p>The work proceeded in phases, each verified before the next began.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Phase</th><th>Content</th><th>Verification</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Import 2d-cdt and 3d-cdt, factor shared headers into <code>common/</code>, then fix the seeding: one <code>std::mt19937_64</code> per chain, seeded from <code>seed</code> and <code>chain</code>.</td><td>Outputs byte-identical to the unmodified upstream builds before the seeding fix; repeated runs byte-identical after it; physics unchanged (tuned \(\kappa_3\) 1.6419 vs 1.6408 over 6 seeds).</td></tr>
+          <tr><td>2</td><td>Correctness tests for 2D and 3D: independent invariant recount, stress runs, exact kernel test.</td><td>Found and fixed four acceptance-ratio errors (<a href="audit.html#upstream">audit</a>). Afterwards every move type passes with \(|R - 1| &lt; 10^{-9}\) and no irreversible moves.</td></tr>
+          <tr><td>3</td><td>Port the 4D sampler: pentachora, the ten moves, site bags and Hastings factors, Lisp-compatible geometry files.</td><td>f-vector change of every move against the Lisp tables; invariant recount including vertex links and slice topology over 100,000 moves; kernel test passes for all ten moves.</td></tr>
+          <tr><td>4</td><td>Cross-validate C++ against Lisp.</td><td>A deterministic replay of 100,000 proposals gives identical validity, acceptance ratio and resulting complex. Five matched equilibrium runs agree within 2σ in all bulk observables.</td></tr>
+          <tr><td>5</td><td>Shared observables: spectral dimension, Hausdorff dimension, curvature, in every dimension.</td><td>C++ values match numpy/scipy on the same configuration to \(10^{-14}\); results independent of thread count.</td></tr>
+          <tr><td>6</td><td>Profiling and reproducibility: a 5× speed-up, exact checkpoint/restart, per-move counters, a multi-chain launcher.</td><td>Recorded fixed-seed trajectories reproduced exactly after the speed-up; restarted runs equal uninterrupted ones bit for bit.</td></tr>
+          <tr><td>7</td><td>Large-volume 4D validation at \(N_{41}\) = 10k–80k.</td><td>Against published targets (<a href="validation.html">validation</a>).</td></tr>
+          <tr><td>8</td><td>4D curvature profile, opt-in bookkeeping of removable sites, checkpoints for 2D and 3D.</td><td>Kernel tests exact in both bookkeeping modes; curvature checked against scipy all-pairs distances; checkpoint byte-identity tests.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="lisp-compare">Comparison with the Lisp code</h2>
+    <p>Phase 4 ran the C++ code and the Lisp code at identical couplings and frozen \(\kappa_4\). A selection of the results (the full comparison has five matched pairs of runs):</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Run</th><th>Observable</th><th>C++</th><th>Lisp</th><th>z</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="3">(2.2, 0.6), T = 24, \(N_{41}\) = 2k</td><td>\(N_0/N_4\)</td><td>0.091406 ± 0.00013</td><td>0.091191 ± 0.0001</td><td>+1.28</td></tr>
+          <tr><td>\(N_{32}/N_{41}\)</td><td>1.2149 ± 0.003</td><td>1.2202 ± 0.0025</td><td>−1.37</td></tr>
+          <tr><td>blob fraction</td><td>0.69159 ± 0.014</td><td>0.69325 ± 0.015</td><td>−0.08</td></tr>
+          <tr><td rowspan="3">(5.0, 0.0), T = 40, \(N_{41}\) = 4k, phase A</td><td>\(N_0/N_4\)</td><td>0.16586 ± 0.00007</td><td>0.16568 ± 0.00005</td><td>+1.98</td></tr>
+          <tr><td>\(N_{32}/N_{41}\)</td><td>0.16312 ± 0.00053</td><td>0.16385 ± 0.00034</td><td>−1.17</td></tr>
+          <tr><td>width</td><td>11.254 ± 0.046</td><td>11.255 ± 0.027</td><td>−0.02</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The largest deviation among the bulk observables (\(N_0/N_4\), \(N_{32}/N_{41}\), \(N_{41}\)) over all runs is 1.98σ.</p>
+
+    <h2 id="performance">Performance</h2>
+    <p>Following profiling, three changes gave a fivefold speed-up without altering the trajectories: stopping star searches once they exceed the largest star a move can have, building face keys without allocation, and reusing move buffers. The 4D code performs <strong>2.8 million proposals per second</strong> at \(N_4 \approx 10\text{k}\) on one core, about 6.5 times the rate of the Lisp code. The large-volume validation ran 26 chains of up to \(3.6\times10^{10}\) proposals each.</p>
+
+    <h2 id="reproducibility">Reproducibility</h2>
+    <ul>
+      <li>Every chain is fully determined by its configuration, its <code>seed</code> and its <code>chain</code> number.</li>
+      <li>Checkpoints save the pools, bags, couplings, both random engines and the lengths of all output files, so a restarted run is bit-for-bit identical to an uninterrupted one. During the validation runs the container runtime stopped once, and every chain resumed exactly from its checkpoint.</li>
+      <li>Observables use a separate random engine, so measurements do not affect the chain.</li>
+      <li><code>make test</code> runs the baselines, kernel tests, stress tests and checkpoint tests.</li>
+    </ul>
+    <p data-code-link>The source code is not yet public; a link will appear here once the repository is published.</p>
+  </main>
+  <footer class="site-footer">
+    <div class="bar">
+      <span>Causal Dynamical Triangulations</span>
+      <span><a href="../about.html">Credits and licences</a> · <a href="../references.html">References</a></span>
+    </div>
+  </footer>
+</body>
+</html>

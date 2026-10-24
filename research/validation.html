@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Validation against published results · CDT</title>
+  <meta name="description" content="Interactive comparison of new 4D and 2D CDT simulation results with published values: de Sitter profile, spectral dimension, phase structure and curvature.">
+  <meta property="og:title" content="Validation against published results · CDT">
+  <meta property="og:description" content="Interactive comparison of new 4D and 2D CDT simulation results with published values: de Sitter profile, spectral dimension, phase structure and curvature.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#14161b" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/site.css">
+  <script>try{var t=localStorage.getItem('cdt-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  <link rel="stylesheet" href="../vendor/katex-0.16.11/katex.min.css">
+  <script defer src="../vendor/katex-0.16.11/katex.min.js"></script>
+  <script defer src="../vendor/katex-0.16.11/contrib/auto-render.min.js"></script>
+  <link rel="stylesheet" href="../vendor/uplot-1.6.31/uPlot.min.css">
+  <script defer src="../js/site.js"></script>
+  <script type="module" src="../js/plots/validation.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="../index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 26 L9 6 L16 26 Z" fill="var(--up)"/><path d="M9 6 L23 6 L16 26 Z" fill="var(--down)"/><path d="M16 26 L23 6 L30 26 Z" fill="var(--up)"/><path d="M2 26 H30 M2 6 H30" stroke="currentColor" stroke-width="1.5"/></svg><span>Causal Dynamical Triangulations</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="../learn/index.html" data-section="/learn/">Learn</a></li>
+          <li><a href="../learn/simulator.html">Simulator</a></li>
+          <li><a href="../research/index.html" data-section="/research/">Research</a></li>
+          <li><a href="../references.html">References</a></li>
+          <li><a href="../about.html">About</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch theme">&#9680;</button>
+    </div>
+  </header>
+  <nav class="sub-nav" aria-label="Research pages">
+    <ul>
+      <li><a href="../research/index.html">Overview</a></li>
+      <li><a href="../research/audit.html">Audit</a></li>
+      <li><a href="../research/code.html">Code</a></li>
+      <li><a href="../research/validation.html">Validation</a></li>
+      <li><a href="../research/roadmap.html">Status</a></li>
+    </ul>
+  </nav>
+  <main id="main" class="wide">
+    <h1>Validation against published results</h1>
+    <section class="in-brief" aria-label="Summary">
+      <h2>Summary</h2>
+      <p>The corrected code reproduces the published 4D results for the de Sitter volume profile, the phase structure, the fluctuation amplitude and the scale-dependent spectral dimension, and the published 2D curvature profile.</p>
+    </section>
+    <p class="lede">Validation was carried out in two rounds: first with the corrected Lisp sampler at \(N_4\) up to 22k (about 62 core-hours), then with the C++ code at 2–16 times that volume (26 chains of up to \(3.6\times10^{10}\) proposals each). The targets come from Ambjørn, Jurkiewicz, Loll and Görlich: <a href="https://arxiv.org/abs/hep-th/0505154">hep-th/0505154</a> [R], <a href="https://arxiv.org/abs/hep-th/0505113">hep-th/0505113</a> [S], <a href="https://arxiv.org/abs/0807.4481">0807.4481</a> [dS] and <a href="https://arxiv.org/abs/1203.3591">1203.3591</a> [Rev].</p>
+
+    <h2 id="summary">Overview of results</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Quantity</th><th>Published</th><th>Lisp, \(N_4 \le 22\text{k}\)</th><th>C++, \(N_4\) = 22k–182k</th><th>Verdict</th></tr></thead>
+        <tbody>
+          <tr><td>de Sitter width \(s_0\) at (2.2, 0.6)</td><td>0.59</td><td>0.551 ± 0.004 and 0.683 ± 0.014 (two chains)</td><td>0.56 ± 0.04 at \(N_4\) = 45k; 0.59 and 0.66 at 91k</td><td class="verdict-yes">Agrees within chain-to-chain spread</td></tr>
+          <tr><td>\(\xi = N_{32}/N_{41}\) at (2.2, 0.6)</td><td>1.225–1.275</td><td>1.217–1.260</td><td>1.264 ± 0.003 (20k), 1.277 ± 0.002 (40k)</td><td class="verdict-yes">Agrees within 1%</td></tr>
+          <tr><td>Kinetic coefficient \(k_1\)</td><td>0.038</td><td>0.043 ± 0.004, 0.040 ± 0.004</td><td>0.0389 ± 0.0011, 0.0386 ± 0.0016</td><td class="verdict-yes">Agrees</td></tr>
+          <tr><td>Phase A at (5.0, 0)</td><td>uncorrelated slices</td><td>slice correlation −0.03</td><td>—</td><td class="verdict-yes">Agrees</td></tr>
+          <tr><td>Phase B at (1.6, 0)</td><td>all volume in one slice</td><td>uniform starts stayed a narrow blob; collapsed starts stayed collapsed</td><td>98.7% (20k) and 99.4% (40k) of the volume in one slice</td><td class="verdict-yes">Agrees (C++)</td></tr>
+          <tr><td>A–C transition at \(\Delta = 0.6\)</td><td>\(\kappa_0 = 4.711\) at \(N_4\) = 120k; \(N_0/N_4\) 0.153 ↔ 0.163</td><td>between 3.9 and 4.2 at \(N_{41}\) = 4k, 4.2 and 4.5 at 10k</td><td>between 4.6 and 4.8 at \(N_4 \approx\) 43k; \(N_0/N_4\) 0.149 ↔ 0.163</td><td class="verdict-yes">Agrees</td></tr>
+          <tr><td>Spectral dimension \(D_S(\sigma)\)</td><td>\(4.02 - 119/(54+\sigma)\) at \(N_4\) = 181k</td><td>same finite-size trend, peak 2.84 → 3.12</td><td>within errors (0.02) of the curve up to \(\sigma = 100\) at \(N_4\) = 91k</td><td class="verdict-yes">Agrees at small σ and in trend</td></tr>
+          <tr><td>Hausdorff dimension \(D_H\)</td><td>3.8 ± 0.25</td><td>qualitative collapse only</td><td>qualitative collapse only</td><td class="verdict-open">Open</td></tr>
+          <tr><td>de Sitter blob at \(N_{41}\) = 80k</td><td>—</td><td>—</td><td>no single blob after \(3\times10^{10}\) proposals</td><td class="verdict-open">Open</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>As a consistency check, in every chain each move's acceptance rate equals that of its inverse, as stationarity requires. In one 20k chain, (2,8)/(8,2) accept 3.603%/3.602% and (4,6)/(6,4) 0.500%/0.500%.</p>
+
+    <h2 id="de-sitter">The de Sitter phase</h2>
+    <p>At \((\kappa_0, \Delta) = (2.2, 0.6)\) the simplices form an extended universe whose average volume profile is expected to follow \(\cos^3\), with width \(s_0 = 0.59\). With time rescaled by \(N_4^{1/4}\) and volume by \(N_4^{3/4}\), the main blobs of all six chains at \(N_{41}\) = 20k and 40k fall on a single curve, which agrees with the published \(\cos^3\).</p>
+    <div class="chart" id="chart-desitter" data-replaces="large-volume/desitter_collapse.png"></div>
+    <figure>
+      <img src="../assets/fig/large-volume/desitter_collapse.png" alt="Rescaled volume profiles of six 4D CDT chains at two volumes collapsing onto the published cos-cubed de Sitter curve with s0 = 0.59; the 80k chains stay spread out." loading="lazy">
+      <figcaption>Scaling collapse of the de Sitter profiles at \(N_{41}\) = 20k and 40k against the published \(s_0 = 0.59\). The raised wings are a secondary lump that has not yet merged; the 80k chains (green) did not form a single blob.</figcaption>
+    </figure>
+    <p>Two qualifications apply. First, every chain still contains a secondary lump holding 15–25% of the volume, which decays only slowly, because the merging of blobs requires volume to flow through the thin stalk. Second, the chain-to-chain spread of \(s_0\) (±0.06) is much larger than any one chain's error, so the shape decorrelates more slowly than standard error estimates assume. Both indicate incomplete equilibration rather than disagreement.</p>
+    <p>The fluctuations around the average profile give the coefficient \(k_1\) of the minisuperspace action: \(0.0389 \pm 0.0011\) at 20k and \(0.0386 \pm 0.0016\) at 40k, against the published 0.038, independent of volume as predicted.</p>
+
+    <h2 id="phases">Phases and transitions</h2>
+    <p><strong>Phase B.</strong> In the first validation, the Lisp code at \(N_4 \approx 9\text{k}\) did not reproduce phase B from a uniform start: the universe remained a narrow blob. (Lisp runs started from a collapsed state remained collapsed, with 89–95% of the volume in one slice.) At larger volume the C++ code shows the collapse clearly. From a uniform start, the volume falls into a single slice: 98.7% at \(N_{41}\) = 20k and 99.4% at 40k. A start that is already collapsed ends in the same state at the same \(\kappa_4\).</p>
+    <p>A control run at 10k with the Lisp settings accounts for the discrepancy: one of two C++ chains collapsed after about \(10^9\) proposals, while the other remained a blob after \(2.4\times10^9\). At small volume the collapse is a slow, stochastic escape from a metastable state, which the Lisp chains had not yet made. The two codes do not differ.</p>
+    <figure>
+      <img src="../assets/fig/large-volume/histories.png" alt="Left: the fraction of volume in the largest slice rising to nearly 1 over the run in phase B. Right: the order parameter N0/N4 over the run near the A–C transition." loading="lazy">
+      <figcaption>Left: phase-B collapse from a uniform start. Right: the order parameter \(N_0/N_4\) near the A–C transition.</figcaption>
+    </figure>
+    <p><strong>The A–C transition</strong> moves to larger \(\kappa_0\) as the volume grows, approaching the published \(\kappa_0 = 4.711\) at \(N_4 = 120\text{k}\):</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>\(N_{41}\)</th><th>Transition between \(\kappa_0\) =</th><th>Code</th></tr></thead>
+        <tbody>
+          <tr><td>4k</td><td>3.9 and 4.2</td><td>Lisp</td></tr>
+          <tr><td>10k</td><td>4.2 and 4.5</td><td>Lisp</td></tr>
+          <tr><td>20k</td><td>4.4 and 4.6</td><td>C++</td></tr>
+          <tr><td>40k</td><td>4.6 and 4.8</td><td>C++</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>On either side of the transition \(N_0/N_4\) is 0.149 (phase C) and 0.163 (phase A), matching the published jump between about 0.153 and 0.163.</p>
+    <div class="chart" id="chart-phases"></div>
+    <figure>
+      <img src="../assets/fig/lisp-validation/phases_profiles.png" alt="Volume profiles in phase A (flat and uncorrelated) and phase C (an extended blob) from the Lisp validation runs." loading="lazy">
+      <figcaption>Volume profiles in phases A and C from the first (Lisp) validation, \(N_{41}\) = 4k, T = 40.</figcaption>
+    </figure>
+
+    <h2 id="spectral">Spectral dimension</h2>
+    <p>The spectral dimension is measured by a random walk on the dual graph, \(D_S(\sigma)\). The published infinite-volume fit is \(4.02 - 119/(54+\sigma)\). At finite volume the curve is expected to follow it at small \(\sigma\), and then to reach a maximum and decrease once the walk becomes sensitive to the size of the universe, with the maximum moving to larger \(\sigma\) and \(D_S\) as the volume grows.</p>
+    <div class="chart" id="chart-spectral" data-replaces="large-volume/spectral.png"></div>
+    <figure>
+      <img src="../assets/fig/large-volume/spectral.png" alt="Spectral dimension against diffusion time for three volumes, following the published AJL fit at small diffusion times and turning over at large ones." loading="lazy">
+      <figcaption>\(D_S(\sigma)\) at three volumes against the AJL fit.</figcaption>
+    </figure>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>σ</th><th>40</th><th>60</th><th>80</th><th>100</th><th>150</th><th>200</th><th>300</th><th>400</th></tr></thead>
+        <tbody>
+          <tr><td>\(N_4\) = 45k</td><td>2.72</td><td>2.93</td><td>3.07</td><td>3.17</td><td>3.28</td><td>3.30</td><td>3.19</td><td></td></tr>
+          <tr><td>\(N_4\) = 91k</td><td>2.73</td><td>2.98</td><td>3.14</td><td>3.24</td><td>3.36</td><td>3.39</td><td>3.39</td><td>3.32</td></tr>
+          <tr><td>\(N_4\) = 182k (no blob)</td><td>2.76</td><td>2.98</td><td>3.11</td><td>3.18</td><td>3.26</td><td>3.31</td><td>3.34</td><td>3.30</td></tr>
+          <tr><td>AJL fit</td><td>2.75</td><td>2.98</td><td>3.13</td><td>3.25</td><td>3.44</td><td>3.55</td><td>3.68</td><td>3.76</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Errors are about ±0.02–0.03. The 91k curve is the most reliable: it agrees with the fit within errors up to \(\sigma = 100\) (the largest difference, 0.02, is at \(\sigma = 40\)), and reaches a maximum of 3.40. The 182k geometry never formed a blob, so it is not a test of the published 181k curve.</p>
+
+    <h2 id="curvature-2d">2D curvature profile</h2>
+    <p>Before the quantum Ricci curvature was ported to 4D, it was checked in 2D against Brunekreef and Loll, <em>Quantum flatness in two-dimensional CDT quantum gravity</em> (<a href="https://arxiv.org/abs/2110.11100">2110.11100</a>). The comparison points were digitised from the paper's figures.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Set</th><th>δ range</th><th>rms z vs paper</th><th>max |diff|</th></tr></thead>
+        <tbody>
+          <tr><td>link distance, \(N_2\) = 50k</td><td>5–17</td><td>1.27</td><td>0.0055</td></tr>
+          <tr><td>link distance, \(N_2\) = 90k</td><td>5–27</td><td>1.60</td><td>0.0093</td></tr>
+          <tr><td>link distance, \(N_2\) = 150k</td><td>4–30</td><td>1.44</td><td>0.0073</td></tr>
+          <tr><td>dual link distance, \(N_2\) = 100k</td><td>22–60</td><td>1.12</td><td>0.0088</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart" id="chart-curvature" data-replaces="curvature2d/profile_link.png"></div>
+    <div class="fig-pair">
+      <figure>
+        <img src="../assets/fig/curvature2d/profile_link.png" alt="Curvature profiles in link distance at three volumes compared with points digitised from arXiv:2110.11100." loading="lazy">
+        <figcaption>Link distance, against 2110.11100 Fig. 5.</figcaption>
+      </figure>
+      <figure>
+        <img src="../assets/fig/curvature2d/bug_vs_fixed.png" alt="Curvature profile from the original 2d-cdt sampler overlaid on the fixed sampler, showing no visible difference." loading="lazy">
+        <figcaption>Original 2d-cdt sampler compared with the corrected one: \(\chi^2/\text{dof} = 1.13\), no significant difference.</figcaption>
+      </figure>
+    </div>
+    <p>The profiles agree with the paper for all four sets. The original 2d-cdt sampler, including its delete-move error, gives the same profile, so the published results are unaffected.</p>
+    <p>As a second check, a small 2D Euclidean dynamical triangulation simulator was written and compared with Klitgaard and Loll, <a href="https://arxiv.org/abs/1802.10524">1802.10524</a>. The fitted effective curvature radii agree within 0.7σ at \(N\) = 20k and are 1–2σ (1.5–2%) higher at 30k and 40k.</p>
+
+    <h2 id="limits">Limitations</h2>
+    <ul>
+      <li>The de Sitter chains are not fully equilibrated: secondary lumps at 20k and 40k, and no single blob at 80k. Equilibration would probably require a starting configuration built as a blob of the expected width, for example a rescaled 40k configuration.</li>
+      <li>\(D_H\) by best overlap runs to the edge of the scan, because the volume–volume correlator is dominated by the secondary lumps.</li>
+      <li>The tuned \(\kappa_4\) values are pseudo-critical values at finite volume and should not be compared with large-volume literature values without a finite-size study.</li>
+    </ul>
+  </main>
+  <footer class="site-footer">
+    <div class="bar">
+      <span>Causal Dynamical Triangulations</span>
+      <span><a href="../about.html">Credits and licences</a> · <a href="../references.html">References</a></span>
+    </div>
+  </footer>
+</body>
+</html>

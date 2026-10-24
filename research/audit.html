@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sampler audit · CDT</title>
+  <meta name="description" content="How the legacy 4D Lisp CDT sampler and the upstream 2D and 3D C++ codes break detailed balance, with exact numbers.">
+  <meta property="og:title" content="Sampler audit · CDT">
+  <meta property="og:description" content="How the legacy 4D Lisp CDT sampler and the upstream 2D and 3D C++ codes break detailed balance, with exact numbers.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#14161b" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/site.css">
+  <script>try{var t=localStorage.getItem('cdt-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  <link rel="stylesheet" href="../vendor/katex-0.16.11/katex.min.css">
+  <script defer src="../vendor/katex-0.16.11/katex.min.js"></script>
+  <script defer src="../vendor/katex-0.16.11/contrib/auto-render.min.js"></script>
+  <script defer src="../js/site.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="../index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 26 L9 6 L16 26 Z" fill="var(--up)"/><path d="M9 6 L23 6 L16 26 Z" fill="var(--down)"/><path d="M16 26 L23 6 L30 26 Z" fill="var(--up)"/><path d="M2 26 H30 M2 6 H30" stroke="currentColor" stroke-width="1.5"/></svg><span>Causal Dynamical Triangulations</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="../learn/index.html" data-section="/learn/">Learn</a></li>
+          <li><a href="../learn/simulator.html">Simulator</a></li>
+          <li><a href="../research/index.html" data-section="/research/">Research</a></li>
+          <li><a href="../references.html">References</a></li>
+          <li><a href="../about.html">About</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch theme">&#9680;</button>
+    </div>
+  </header>
+  <nav class="sub-nav" aria-label="Research pages">
+    <ul>
+      <li><a href="../research/index.html">Overview</a></li>
+      <li><a href="../research/audit.html">Audit</a></li>
+      <li><a href="../research/code.html">Code</a></li>
+      <li><a href="../research/validation.html">Validation</a></li>
+      <li><a href="../research/roadmap.html">Status</a></li>
+    </ul>
+  </nav>
+  <main id="main">
+    <h1>Sampler audit</h1>
+    <section class="in-brief" aria-label="Summary">
+      <h2>Summary</h2>
+      <p>The geometry in the legacy 4D code is correct, but its Monte Carlo sampler does not satisfy detailed balance and therefore samples a different distribution from the intended one. Smaller errors of the same kind were found in the upstream 2D and 3D codes.</p>
+    </section>
+    <h2 id="detailed-balance">Correctness criterion</h2>
+    <p>A CDT simulation should visit each triangulation \(T\) with probability proportional to \(e^{-S[T]}\). The standard way to guarantee this is <em>detailed balance</em>: in equilibrium, the flow from \(T\) to \(T'\) equals the flow back,</p>
+    $$e^{-S[T]}\; q(T\to T')\; a(T\to T') \;=\; e^{-S[T']}\; q(T'\to T)\; a(T'\to T),$$
+    <p>where \(q\) is the probability that the code <em>proposes</em> a move and \(a\) the probability that it accepts it. The Metropolis–Hastings rule \(a = \min\big(1,\, R\, e^{-\Delta S}\big)\) with \(R = q(T'\to T)/q(T\to T')\) satisfies this. Omitting \(R\) is correct only if every move and its inverse are equally likely to be proposed, which is rarely the case in CDT.</p>
+    <p>Detailed balance can be checked exactly. On a small triangulation, enumerate every random draw the code could make, count how many lead to each move instance, apply the move, and repeat the count for the inverse in the new triangulation. This gives \(R\) exactly for every instance, for comparison with the factor used by the code. This procedure, referred to here as the <strong>kernel test</strong>, identified every error described on this page.</p>
+
+    <h2 id="lisp">The legacy 4D Lisp code</h2>
+    <p>The audit covered the 3+1-dimensional Lisp code by Rajesh Kommu (<code>3p1/</code>). The sources were not modified; every check was run on the code as distributed, in SBCL under Docker.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Layer</th><th>Verdict</th></tr></thead>
+        <tbody>
+          <tr><td>Geometry and topology: the move set, the simplicial-manifold bookkeeping, the initial \(S^3\times S^1\)</td><td class="verdict-yes">Correct for even T ≥ 4</td></tr>
+          <tr><td>Regge action and the change in counts per move</td><td class="verdict-yes">Correct</td></tr>
+          <tr><td>Monte Carlo sampling</td><td class="verdict-no">Incorrect: no detailed balance</td></tr>
+          <tr><td>Volume control</td><td class="verdict-no">Inadequate</td></tr>
+          <tr><td>C++ observables</td><td class="verdict-open">Off-by-one and sampling bugs</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 id="geometry-ok">Geometry</h3>
+    <p>An independent checker recomputed all derived data from the list of simplices alone: simplex types and times, every tetrahedron shared by exactly two pentachora, symmetric neighbour pointers, the sub-simplex tables, the counts, Euler characteristic zero, and every spatial slice a closed 3-manifold. It was run after every move in stress tests of all ten move types, over 10,000 mixed moves and over Metropolis sweeps. <strong>No invariant violation was found.</strong> The change in counts of every move satisfies both 4D Dehn–Sommerville relations, and the action coefficients match the AJL action exactly.</p>
+
+    <h3 id="b1">B1. No Hastings factor (critical)</h3>
+    <p>The code drew a random simplex id and a random move type, and re-drew until a move was possible. Exact enumeration of all 7,100 draws on a configuration with \(N_4 = 700\) gives the true ratio \(R\) for each move type:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Move</th><th>R min</th><th>R mean</th><th>R max</th></tr></thead>
+        <tbody>
+          <tr><td>(2,8)</td><td>3.95</td><td><strong>3.96</strong></td><td>3.97</td></tr>
+          <tr><td>(8,2)</td><td>0.25</td><td><strong>0.25</strong></td><td>0.25</td></tr>
+          <tr><td>(4,6)</td><td>0.50</td><td>1.70</td><td>2.98</td></tr>
+          <tr><td>(6,4)</td><td>0.67</td><td>1.09</td><td>2.01</td></tr>
+          <tr><td>(2,4) v1</td><td>1.99</td><td>2.50</td><td>4.00</td></tr>
+          <tr><td>(2,4) v2</td><td>1.99</td><td>2.83</td><td>4.02</td></tr>
+          <tr><td>(4,2) v1</td><td>0.50</td><td>0.50</td><td>0.50</td></tr>
+          <tr><td>(4,2) v2</td><td>0.25</td><td>0.45</td><td>0.50</td></tr>
+          <tr><td>(3,3) v1</td><td>0.67</td><td>0.99</td><td>1.50</td></tr>
+          <tr><td>(3,3) v2</td><td>0.67</td><td>0.97</td><td>1.01</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The code used \(R = 1\) for all of them. For (2,8)/(8,2), \(R\) is a constant 4, because a (2,8) site is reached from its 2 pentachora while the inverse (8,2) site is reached from all 8. This alone is equivalent to sampling at an effective \(\kappa_0\) shifted by \(-\ln 4 \approx -1.39\). For the other moves \(R\) depends on the local configuration, so the effect is not a simple shift of the couplings: the code samples an uncontrolled reweighting of \(e^{-S}\).</p>
+    <p>The same sweep design is used in the 2+1-dimensional Lisp codes in the repository, so the problem is not confined to the 4D code.</p>
+
+    <h3 id="b2">B2. Failed proposals re-drawn (high)</h3>
+    <p>78% of draws fell on a site where no move was possible and were re-drawn rather than counted as rejections. This conditions the chain on the move being possible, which changes the proposal probabilities in a way that depends on the whole configuration. It also means that the reported acceptance rates were not true acceptance rates.</p>
+
+    <h3 id="b3">B3. First-found candidate and irreversible moves (critical)</h3>
+    <p>Each move search returned the <em>first</em> valid candidate in list order, rather than a random one. Valid moves preceded by another candidate are never proposed from that starting simplex. In a test of 300 (4,6) moves, <strong>3 (1%) could not be reversed</strong>: after the move, every one of the six new pentachora found a different (6,4) candidate first. A move whose inverse has zero proposal probability violates detailed balance directly.</p>
+
+    <h3 id="b4">B4. Wrong pair enumeration (medium)</h3>
+    <p>A helper meant to iterate over all pairs of neighbours returned only cyclic pairs: for \((a, b, c, d)\) it gave \((a,b), (b,c), (c,d), (d,a)\) and never \((a,c)\) or \((b,d)\). With five neighbours, 5 of the 10 pairs were skipped. The correct helper already existed in the same utilities file.</p>
+
+    <h3 id="b5">B5. Volume fixing fails (high)</h3>
+    <p>The code held the volume with a linear penalty \(0.02\,|N_4 - V|\). This can work only if \(\kappa_4\) is within about ±0.02 of its pseudo-critical value. At \((\kappa_0, \Delta) = (2.2, 0.6)\), \(\kappa_4 = -0.2\) made \(N_4\) grow from 4,000 to 83,910 in 30 sweeps, and \(\kappa_4 \ge 0.1\) collapsed it to the minimal spacetime. No extended universe could be observed.</p>
+
+    <details class="deeper">
+      <summary>Smaller findings</summary>
+      <ul>
+        <li><strong>B6.</strong> The random id was drawn from \(0\ldots\text{max}-1\), which includes unused ids and can never pick the newest simplex.</li>
+        <li><strong>B7.</strong> Acceptance probabilities in single precision (24-bit), and an RNG seeded from the clock and never saved, so runs could not be reproduced.</li>
+        <li><strong>Initialisation.</strong> T = 2 gives a degenerate complex and odd T is silently wrong; there is no input check.</li>
+        <li><strong>Safety.</strong> Every file compiles with <code>(safety 0)</code>, so a memory error would produce incorrect data rather than an error message.</li>
+        <li><strong>Observables.</strong> Off-by-one random indices and loop bounds in the C++ diffusion codes, and a non-lazy random walk that makes even and odd diffusion times oscillate.</li>
+      </ul>
+    </details>
+
+    <h2 id="fix">The corrected sampler</h2>
+    <p>The corrected code (<code>3p1_mh/</code>) keeps the move geometry unchanged and replaces the sampler:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Finding</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td>B1, B6: random ids with holes</td><td>O(1) <strong>site bags</strong> of (4,1)/(1,4) and (3,2)/(2,3) simplices, with uniform pick, add and remove.</td></tr>
+          <tr><td>B2: failed draws re-drawn</td><td><strong>One site per proposal.</strong> If the site carries no valid move, the proposal counts as a rejection.</td></tr>
+          <tr><td>B3: first-found candidate</td><td>Each draw names the move's <strong>centre</strong>, the sub-simplex it removes. A Pachner move is fixed by its centre, so there is at most one candidate per draw.</td></tr>
+          <tr><td>B1: no Hastings factor</td><td>\(a = \min\big(1,\ C_m(T)/C_{\text{rev}}(T')\; e^{-\Delta S}\big)\), with the site counts \(C_m\) derived per move type.</td></tr>
+          <tr><td>B4: cyclic pairs</td><td>Iteration over all pairs and triples.</td></tr>
+          <tr><td>B5: linear volume fixing</td><td><strong>Quadratic</strong> fixing \(\varepsilon\,(N_{41} - \bar V)^2\) and adaptive \(\kappa_4\) during thermalisation only.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The resulting Hastings factors are simple. For example, (2,8) gets \(N_{41}/(N_{41}+6)\), (8,2) gets \(N_{41}/(N_{41}-6)\), (4,6) gets \(N_{41}/(N_{41}+2)\), and the v1 (2,4), (4,2) and (3,3) moves get exactly 1.</p>
+    <p><strong>Verification.</strong> The kernel test, enumerating every draw on three configurations, checked more than 2,300 move instances of all ten types. For every one, the exact ratio \(R\) equals the factor the sampler uses, with \(|R/H - 1| \le 2\cdot10^{-15}\), and <strong>no move is irreversible</strong>. With quadratic volume fixing, chains started at \(\kappa_4 = 0\) and \(\kappa_4 = 1.5\) both reach the target volume within 15 sweeps and settle at the same \(\kappa_4\).</p>
+
+    <h2 id="upstream">The upstream 2D and 3D codes</h2>
+    <p>For the <a href="code.html">unified C++ codebase</a>, built from JorenB's <a href="https://github.com/JorenB/2d-cdt">2d-cdt</a> and <a href="https://github.com/JorenB/3d-cdt">3d-cdt</a>, the kernel test was ported to C++ and applied to these codes as well. Their design follows the methods paper of Brunekreef, Görlich and Loll (<a href="https://arxiv.org/abs/2310.16744">2310.16744</a>). The test found four errors in the acceptance ratios:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Code</th><th>Error</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td>3D add / delete</td><td>The add move picks a (3,1)-simplex and its inverse picks a vertex, so the correct ratio is \(N_{31}/(N_0+1)\), as in eq. (26) of the methods paper. The code used \(N_{31}/(N_{31}+2)\), and the corresponding wrong factor for delete.</td><td>Add was under-accepted about 2×, so the code effectively simulated \(k_0 - \ln 2\). The tuned \(\kappa_3\) at \(k_0 = 5\) moves from 1.641 to 1.812 when fixed, a shift of 0.171 against the predicted \(\ln 2/4 = 0.173\).</td></tr>
+          <tr><td>2D delete at the target volume</td><td>At \(N_2 = \bar V\) a delete increases the penalty \(\varepsilon|N_2 - \bar V|\), so the factor should be \(e^{-2\varepsilon}\); the code used \(e^{+2\varepsilon}\) (a <code>&lt;</code> that should have been <code>&lt;=</code>).</td><td>These deletions were over-accepted by \(e^{4\varepsilon} = 1.083\).</td></tr>
+          <tr><td>3D delete and inverse shift, volume terms</td><td>Two volume-fixing expressions had a sign flipped.</td><td>Off by \(e^{8\varepsilon}\), \(e^{32\varepsilon}\) and \(e^{2\varepsilon}\); negligible at the default \(\varepsilon\), but incorrect.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The port also showed that the upstream codes initialised every random engine with seed 0 and reseeded only one of them from the configuration. The engine that selects move sites therefore produced the same sequence for every seed.</p>
+    <p>For published results, the effect of the 2D error was checked directly: the curvature profile of arXiv:2110.11100, recomputed with the original sampler, agrees with the corrected one (\(\chi^2/\text{dof} = 1.13\)), so those results are unaffected. The 3D shift of \(k_0\) by \(\ln 2\) is larger, and results obtained with the original 3d-cdt correspond to a different effective \(k_0\) from the configured value.</p>
+
+    <div class="callout">
+      <p><strong>Remark.</strong> Statistical checks, such as comparisons of averages with known results, can miss sampler errors of this size, particularly when the error is equivalent to a shift in a coupling that is tuned in any case. An exact kernel test detects such errors directly and is inexpensive to run.</p>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="bar">
+      <span>Causal Dynamical Triangulations</span>
+      <span><a href="../about.html">Credits and licences</a> · <a href="../references.html">References</a></span>
+    </div>
+  </footer>
+</body>
+</html>

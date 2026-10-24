@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>References · CDT</title>
+  <meta name="description" content="A categorized bibliography of Causal Dynamical Triangulations and related quantum gravity research, with a suggested reading order.">
+  <meta property="og:title" content="References · CDT">
+  <meta property="og:description" content="A categorized bibliography of Causal Dynamical Triangulations and related quantum gravity research, with a suggested reading order.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#14161b" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/site.css">
+  <script>try{var t=localStorage.getItem('cdt-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  <script defer src="js/site.js"></script>
+  <script type="module" src="js/references.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 26 L9 6 L16 26 Z" fill="var(--up)"/><path d="M9 6 L23 6 L16 26 Z" fill="var(--down)"/><path d="M16 26 L23 6 L30 26 Z" fill="var(--up)"/><path d="M2 26 H30 M2 6 H30" stroke="currentColor" stroke-width="1.5"/></svg><span>Causal Dynamical Triangulations</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="learn/index.html" data-section="/learn/">Learn</a></li>
+          <li><a href="learn/simulator.html">Simulator</a></li>
+          <li><a href="research/index.html" data-section="/research/">Research</a></li>
+          <li><a href="references.html">References</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch theme">&#9680;</button>
+    </div>
+  </header>
+  <main id="main">
+    <h1>References</h1>
+    <section class="in-brief" aria-label="Summary">
+      <h2>Summary</h2>
+      <p>A categorised bibliography of CDT and related work, with links to arXiv, and a suggested reading order.</p>
+    </section>
+    <noscript><p class="callout">The lists on this page require JavaScript. The papers can be found by searching for "causal dynamical triangulations" on <a href="https://arxiv.org/search/?query=causal+dynamical+triangulations&amp;searchtype=all">arXiv</a>.</p></noscript>
+
+    <h2 id="start-here">Reading order</h2>
+    <p>A suggested reading order, from review articles to the specific results discussed on this site.</p>
+    <ol id="reading-steps"></ol>
+
+    <details class="deeper">
+      <summary>Background textbooks</summary>
+      <div class="table-wrap">
+        <table id="textbooks">
+          <thead><tr><th>Topic</th><th>Books</th><th>Useful for</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </details>
+
+    <h2 id="bibliography">Bibliography</h2>
+    <p>Papers collected during the project, grouped into seven categories, with a note on the relevance of each where available. All links point to arXiv or the publisher.</p>
+    <div class="controls ref-controls">
+      <label>Search <input id="ref-search" type="search" placeholder="title, author, arXiv id…"></label>
+      <label>Category <select id="ref-category"></select></label>
+      <label>Sort <select id="ref-sort"><option value="new">Newest first</option><option value="old">Oldest first</option></select></label>
+    </div>
+    <p id="ref-count" class="ref-count" aria-live="polite"></p>
+    <ul id="ref-list" class="ref-list"></ul>
+  </main>
+  <footer class="site-footer">
+    <div class="bar">
+      <span>Causal Dynamical Triangulations</span>
+      <span><a href="about.html">Credits and licences</a> · <a href="references.html">References</a></span>
+    </div>
+  </footer>
+</body>
+</html>
